@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>World Clock — MTI</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--accent);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 1100px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .city {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .time {
+      font-size: 1.6rem;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
+    }
+    .date {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .footer {
+      margin-top: 2rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .back-link {
+      margin-top: 1.2rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>World Clock</h1>
+  <div class="grid" id="clocks"></div>
+  <div class="footer">Updates every second • Local browser time</div>
+  <a class="back-link" href="../">← Back to projects</a>
+
+  <script>
+    const cities = [
+      { city: "New York", zone: "America/New_York" },
+      { city: "Los Angeles", zone: "America/Los_Angeles" },
+      { city: "Chicago", zone: "America/Chicago" },
+      { city: "London", zone: "Europe/London" },
+      { city: "Paris", zone: "Europe/Paris" },
+      { city: "Berlin", zone: "Europe/Berlin" },
+      { city: "Madrid", zone: "Europe/Madrid" },
+      { city: "Rome", zone: "Europe/Rome" },
+      { city: "Bucharest", zone: "Europe/Bucharest" },
+      { city: "Moscow", zone: "Europe/Moscow" },
+      { city: "Dubai", zone: "Asia/Dubai" },
+      { city: "Mumbai", zone: "Asia/Kolkata" },
+      { city: "Singapore", zone: "Asia/Singapore" },
+      { city: "Tokyo", zone: "Asia/Tokyo" },
+      { city: "Seoul", zone: "Asia/Seoul" },
+      { city: "Sydney", zone: "Australia/Sydney" },
+      { city: "Auckland", zone: "Pacific/Auckland" },
+      { city: "Johannesburg", zone: "Africa/Johannesburg" },
+      { city: "Cairo", zone: "Africa/Cairo" },
+      { city: "Toronto", zone: "America/Toronto" },
+      { city: "Mexico City", zone: "America/Mexico_City" },
+      { city: "Sao Paulo", zone: "America/Sao_Paulo" },
+      { city: "Buenos Aires", zone: "America/Argentina/Buenos_Aires" },
+      { city: "Istanbul", zone: "Europe/Istanbul" },
+      { city: "Hong Kong", zone: "Asia/Hong_Kong" }
+    ];
+
+    const container = document.getElementById("clocks");
+
+    function formatTime(date, timeZone) {
+      return new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+        timeZone
+      }).format(date);
+    }
+
+    function formatDate(date, timeZone) {
+      return new Intl.DateTimeFormat("en-GB", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        timeZone
+      }).format(date);
+    }
+
+    function render() {
+      container.innerHTML = "";
+      const now = new Date();
+
+      cities.forEach(({ city, zone }) => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const cityEl = document.createElement("div");
+        cityEl.className = "city";
+        cityEl.textContent = city;
+
+        const timeEl = document.createElement("div");
+        timeEl.className = "time";
+        timeEl.textContent = formatTime(now, zone);
+
+        const dateEl = document.createElement("div");
+        dateEl.className = "date";
+        dateEl.textContent = formatDate(now, zone);
+
+        card.appendChild(cityEl);
+        card.appendChild(timeEl);
+        card.appendChild(dateEl);
+        container.appendChild(card);
+      });
+    }
+
+    render();
+    setInterval(render, 1000);
+  </script>
+</body>
+</html>
