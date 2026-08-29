@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One-Man Band OS - Dashboard</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel for in-browser JSX compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* Custom scrollbar for a cleaner look */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 overflow-hidden">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('overview');
+
+      const navItems = [
+        { id: 'overview', label: 'Overview & Status', icon: 'fa-solid fa-gauge' },
+        { id: 'phase0', label: 'Phase 0: Foundation', icon: 'fa-solid fa-scale-balanced' },
+        { id: 'phase1', label: 'Phase 1: Discovery', icon: 'fa-solid fa-lightbulb' },
+        { id: 'phase2', label: 'Phase 2: Validation', icon: 'fa-solid fa-file-contract' },
+        { id: 'phase3', label: 'Phase 3: Master Budget', icon: 'fa-solid fa-money-bill-trend-up' },
+        { id: 'phase4', label: 'Phase 4: Launch', icon: 'fa-solid fa-rocket' },
+      ];
+
+      return (
+        <div className="flex h-screen overflow-hidden">
+          <div className="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-10">
+            <div className="p-6">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+                One-Man Band OS
+              </h1>
+              <p className="text-xs text-slate-400 mt-1">AI Invoice Micro-SaaS</p>
+            </div>
+            <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                    activeTab === item.id 
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/50' 
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  <i className={`${item.icon} w-5 text-center`}></i>
+                  <span className="font-medium text-sm">{item.label}</span>
+                </button>
+              ))}
+            </nav>
+            <div className="p-4 border-t border-slate-800">
+              <div className="bg-slate-800 rounded-lg p-3">
+                <p className="text-xs text-slate-400 mb-1">Entity Registration</p>
+                <p className="text-sm font-semibold text-slate-200">Dumbrăvița, RO</p>
+                <p className="text-xs text-slate-400 mt-1">CAEN: 6201</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto bg-slate-50">
+            <header className="bg-white border-b border-slate-200 px-8 py-5 sticky top-0 z-10 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-slate-800">
+                {navItems.find(i => i.id === activeTab)?.label}
+              </h2>
+              <div className="text-xs text-slate-500 flex items-center bg-slate-100 px-3 py-1.5 rounded-full">
+                <i className="fa-solid fa-circle-info mr-2"></i>
+                Hover over dashed text for insights
+              </div>
+            </header>
+            
+            <main className="p-8 max-w-6xl mx-auto">
+              {activeTab === 'overview' && <OverviewTab />}
+              {activeTab === 'phase0' && <Phase0Tab />}
+              {activeTab === 'phase1' && <Phase1Tab />}
+              {activeTab === 'phase2' && <Phase2Tab />}
+              {activeTab === 'phase3' && <Phase3Tab />}
+              {activeTab === 'phase4' && <Phase4Tab />}
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    function OverviewTab() {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <MetricCard title="Target Gross Margin" value=">90%" subtitle="Highly Capital Efficient" icon="fa-solid fa-arrow-trend-up" color="text-emerald-500" />
+            <MetricCard title="Max Revenue Ceiling" value="€100,000" subtitle="Microenterprise limit" icon="fa-solid fa-euro-sign" color="text-indigo-500" />
+            <MetricCard title="Setup Cost" value="<$1,000" subtitle="Day 1-30 CapEx" icon="fa-solid fa-server" color="text-cyan-500" />
+            <MetricCard title="Automation Level" value="70-80%" subtitle="AI handles daily ops" icon="fa-solid fa-robot" color="text-purple-500" />
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h3 className="text-lg font-bold mb-6">Project Master Timeline</h3>
+            <div className="relative">
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+              <div className="space-y-6 relative">
+                <TimelineItem title="Phase 0: Foundation" status="complete" desc="Advisors, Tax Strategies, CAEN 6201, Entity Location (Dumbravita)." />
+                <TimelineItem title="Phase 1: Discovery" status="complete" desc="Evaluated WhatsApp vs. Lead Gen vs. Invoice SaaS. Selected Invoice SaaS." />
+                <TimelineItem title="Phase 2: Validation" status="current" desc="Deep architecture planning, PSD2/FDCPA compliance frameworks mapped." />
+                <TimelineItem title="Phase 3: MVP Build" status="pending" desc="Bubble + Supabase configuration, Stripe Connect integration." />
+                <TimelineItem title="Phase 4: Launch" status="pending" desc="Niche community marketing, self-serve onboarding, churn management." />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Phase0Tab() {
+      return (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-bold flex items-center text-slate-800">
+                <i className="fa-solid fa-building-shield mr-2 text-indigo-500"></i> August 2026 Fiscal Architecture
+              </h3>
+            </div>
+            <p className="text-slate-600 mb-6 text-sm">Entity: SRL in Dumbrăvița. CAEN: 6201 (Custom Software Development). Găzduire la cabinet de avocatură.</p>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-100">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-bold text-emerald-900">Recommended: Standard CIT</h4>
+                  <Badge color="bg-emerald-200 text-emerald-800">16% Profit Tax</Badge>
+                </div>
+                <div className="space-y-3 text-sm text-slate-700">
+                  <p><strong>Impozit:</strong> 16% pe Profitul Net (Venituri - Cheltuieli).</p>
+                  <p><strong>Angajați:</strong> <span className="font-bold text-emerald-700">0 angajați necesari.</span> Elimină povara taxelor salariale fixe.</p>
+                  <p><strong>Extragere Dividende:</strong> 16% + CASS (la praguri de 6/12/24 salarii minime).</p>
+                  <div className="bg-white p-3 rounded border border-emerald-200 mt-2 text-xs">
+                    <em>Strategic Fit:</em> Ideal for Day 1. Protects your initial startup capital from being drained by mandatory minimum wage taxes before the SaaS hits profitability.
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-bold text-slate-800">Alternative: Microenterprise</h4>
+                  <Badge color="bg-slate-200 text-slate-700">3% Turnover Tax</Badge>
+                </div>
+                <div className="space-y-3 text-sm text-slate-700">
+                  <p><strong>Impozit (CAEN 6201):</strong> 3% pe Cifra de Afaceri (până la €100,000).</p>
+                  <p><strong>Condiție:</strong> Minim 1 angajat cu normă întreagă obligatoriu.</p>
+                  <p><strong>Cost Salarial:</strong> Salariul minim brut: 4.325 RON. Generând costuri de <span className="font-bold text-red-600">&gt;53.000 RON anual</span>.</p>
+                  <div className="bg-white p-3 rounded border border-slate-200 mt-2 text-xs">
+                    <em>Strategic Fit:</em> Only viable once MRR (Monthly Recurring Revenue) vastly exceeds the fixed 4,325 RON monthly payroll burden.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 bg-blue-50 p-5 rounded-xl border border-blue-100">
+              <h4 className="font-semibold text-blue-900 mb-3 flex items-center">
+                <i className="fa-solid fa-earth-europe mr-2"></i> B2B EU Invoicing & Operations
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                <div className="bg-white p-4 rounded border border-blue-200">
+                  <strong className="block mb-1">VIES & Taxare Inversă</strong>
+                  <p className="text-xs text-slate-600">
+                    Înscriere obligatorie în Registrul Operatorilor Intracomunitari (VIES). Facturarea clienților B2B din UE (ex. Google Ireland) se face cu <InfoTooltip label="Reverse Charge" content="Regim de taxare inversă. Nu adaugi TVA pe factură, obligația raportării TVA revine clientului tău B2B din statul său membru." />.
+                  </p>
+                </div>
+                <div className="bg-white p-4 rounded border border-blue-200">
+                  <strong className="block mb-1 text-red-700">RO e-Factura (Domestic)</strong>
+                  <p className="text-xs text-slate-600">
+                    Facturile interne necesită transmitere XML (RO_CIUS) în SPV ANAF în 5 zile (Certificat Digital necesar prin contabilul CECCAR).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Phase1Tab() {
+      return (
+        <div className="space-y-6">
+          <h3 className="text-xl font-bold text-slate-800 mb-4">Concept Filtration Matrix</h3>
+          <div className="space-y-4">
+            <ExpandableCard 
+              title="1. WhatsApp Booking & Support Agents"
+              badge={<Badge color="bg-red-100 text-red-700">Discarded</Badge>}
+              summary="Pre-configured AI receptionists for local offline commerce. High margin but severe platform risks."
+            >
+              <div className="text-sm text-slate-600 space-y-4">
+                <p><strong>The Opportunity:</strong> Replacing buggy legacy software and expensive chat tools. Binary sales pitch.</p>
+                <div className="text-xs p-3 bg-slate-100 rounded border border-slate-200">
+                  <strong className="text-red-600 block mb-1">Disqualifiers:</strong>
+                  Make.com Webhook Concurrency Limits (HTTP 429 drops under load). Meta Destination-Based Pricing kills fixed-price SaaS margins in Europe. High-touch onboarding required for local services.
+                </div>
+              </div>
+            </ExpandableCard>
+
+            <ExpandableCard 
+              title="2. Managed DFY Lead Enrichment"
+              badge={<Badge color="bg-slate-100 text-slate-700">Backup Concept</Badge>}
+              summary="Productized service offering 'waterfall enrichment' data pipelines for B2B sales teams."
+            >
+              <div className="text-sm text-slate-600 space-y-4">
+                <p><strong>The Opportunity:</strong> Exploiting RevOps frustration with Clay.com's credit billing.</p>
+                <div className="text-xs p-3 bg-slate-100 rounded border border-slate-200">
+                  <strong className="text-slate-700 block mb-1">Status:</strong>
+                  Kept as backup. Excellent unit economics, but requires constantly managing scraper health (Apify) which breaks when DOM structures change.
+                </div>
+              </div>
+            </ExpandableCard>
+
+            <ExpandableCard 
+              title="3. Vertical AI Invoice & Collections Micro-SaaS"
+              badge={<Badge color="bg-indigo-100 text-indigo-700">WINNER</Badge>}
+              summary="SaaS integrating with Stripe to automate polite chasing of unpaid B2B invoices."
+              defaultOpen={true}
+            >
+              <div className="text-sm text-slate-700 space-y-3 bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                <p><strong>The Gap:</strong> Freelancers hate chasing money. Enterprise AR is too complex.</p>
+                <p><strong>Margin:</strong> <span className="font-bold text-emerald-600">&gt;90%</span></p>
+                <p><strong>Tech Stack:</strong> Bubble.io + Supabase + Stripe API + Cursor AI.</p>
+                <p><strong>Why it Wins:</strong> Digitally native audience (self-serve). Event-driven (Stripe webhooks) keeps server costs negligible. Solves a direct financial pain point.</p>
+              </div>
+            </ExpandableCard>
+          </div>
+        </div>
+      );
+    }
+
+    function Phase2Tab() {
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold mb-4 flex items-center text-slate-800">
+                <i className="fa-solid fa-scale-balanced mr-2 text-indigo-500"></i> Regulatory Shields
+              </h3>
+              <div className="space-y-4">
+                <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                  <h4 className="font-semibold text-emerald-900">PSD2 / EMI License Bypass</h4>
+                  <p className="text-xs text-emerald-700 mt-2">
+                    <strong>Solution:</strong> Stripe Connect <span className="font-bold">"Separate Charges & Transfers"</span>. The SRL never touches the funds. Money goes to a Stripe safeguarding account; Stripe handles EMI licenses.
+                  </p>
+                </div>
+                <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                  <h4 className="font-semibold text-blue-900">US FDCPA Exemptions</h4>
+                  <p className="text-xs text-blue-700 mt-2">
+                    FDCPA only applies to consumer debt; we explicitly target <strong>Commercial (B2B)</strong> freelance invoices. Furthermore, acting as a white-labeled "billing service" qualifies under the <strong>First-Party Creditor</strong> exemption.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h3 className="text-lg font-bold mb-4 flex items-center text-slate-800">
+                <i className="fa-solid fa-code mr-2 text-indigo-500"></i> Technical Architecture
+              </h3>
+              <div className="space-y-4">
+                <div className="border border-slate-100 bg-slate-50 p-4 rounded-xl">
+                  <h4 className="font-semibold text-sm">Bubble.io (Event-Driven)</h4>
+                  <p className="text-xs text-slate-600 mt-1">
+                    To prevent bankrupting the SaaS on Workload Units (WUs), do not use polling. Use Stripe <InfoTooltip label="Webhooks" content="Stripe pushes a payload ONLY when a state changes, consuming a fraction of a WU compared to active polling." /> to trigger logic.
+                  </p>
+                </div>
+                <div className="border border-slate-100 bg-slate-50 p-4 rounded-xl">
+                  <h4 className="font-semibold text-sm">Supabase Vault</h4>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Uses pgsodium encryption at rest for API keys.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Phase3Tab() {
+      return (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h3 className="text-lg font-bold text-slate-800 mb-2">MVP Master Budget (Day 1-90)</h3>
+            <p className="text-sm text-slate-500 mb-6">Target: Maintain monthly burn rate under $520.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-slate-50 text-slate-600">
+                  <tr>
+                    <th className="px-4 py-3 rounded-tl-lg font-medium">Category</th>
+                    <th className="px-4 py-3 font-medium">Specific Line Item</th>
+                    <th className="px-4 py-3 font-medium">Estimated Cost</th>
+                    <th className="px-4 py-3 rounded-tr-lg font-medium">Context</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  <tr className="bg-slate-50/50"><td colSpan="4" className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider">CapEx (One-Time Setup)</td></tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-slate-800">Entity Setup</td>
+                    <td className="px-4 py-3">SRL Formation</td>
+                    <td className="px-4 py-3 font-mono">$150 – $300</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">Registry fees, 500 RON share capital, notary.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-slate-800">Legal</td>
+                    <td className="px-4 py-3">TOS & DPA Drafting</td>
+                    <td className="px-4 py-3 font-mono">$200 – $500</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">GDPR-compliant terms for 3rd-party data tracking.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-slate-800">Marketing</td>
+                    <td className="px-4 py-3">Secondary Domains</td>
+                    <td className="px-4 py-3 font-mono">$30 – $40</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">3-4 domains to protect primary brand from spam flags.</td>
+                  </tr>
+                  <tr className="bg-slate-50/50"><td colSpan="4" className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">SaaS OpEx (Monthly Burn)</td></tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-indigo-900">Infrastructure</td>
+                    <td className="px-4 py-3">Bubble + Supabase</td>
+                    <td className="px-4 py-3 font-mono font-semibold">$54 / mo</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">Frontend hosting & Postgres database.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-indigo-900">Development</td>
+                    <td className="px-4 py-3">Cursor AI Pro</td>
+                    <td className="px-4 py-3 font-mono font-semibold">$20 / mo</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">Agentic IDE for API bridges.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-indigo-900">Acquisition</td>
+                    <td className="px-4 py-3">Apollo + Smartlead</td>
+                    <td className="px-4 py-3 font-mono font-semibold">$86 – $89 / mo</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">B2B scraping & cold email automation.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-indigo-900">Operations</td>
+                    <td className="px-4 py-3">LLMs + Email (Postmark)</td>
+                    <td className="px-4 py-3 font-mono font-semibold">$30 – $55 / mo</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">Variable inference and transactional sending.</td>
+                  </tr>
+                  <tr className="bg-slate-50/50"><td colSpan="4" className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider mt-4">Romanian Corporate Overhead</td></tr>
+                  <tr>
+                    <td className="px-4 py-3 font-medium text-slate-800">Compliance</td>
+                    <td className="px-4 py-3">CECCAR CPA</td>
+                    <td className="px-4 py-3 font-mono">$100 – $150 / mo</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">Mandatory for ANAF filings & OSS VAT.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Phase4Tab() {
+      return (
+        <div className="space-y-6">
+          <div className="bg-gradient-to-br from-indigo-900 to-slate-900 p-8 rounded-2xl shadow-lg text-white">
+            <h3 className="text-2xl font-bold mb-2 flex items-center">
+              <i className="fa-solid fa-rocket mr-3 text-cyan-400"></i> The 80/20 Delegation Architecture
+            </h3>
+            <p className="text-indigo-200 max-w-2xl text-sm leading-relaxed mb-8">
+              Focus your 20% on growth, positioning, and monitoring margins. AI handles the 80% execution.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white/10 p-5 rounded-xl border border-white/20">
+                <i className="fa-solid fa-bullhorn text-cyan-400 text-xl mb-3"></i>
+                <h4 className="font-bold mb-1">Acquisition (Founder 20%)</h4>
+                <p className="text-xs text-slate-300">Target niche community hubs: Upwork forums, PR agency networks. Pitch direct financial recovery.</p>
+              </div>
+              <div className="bg-white/10 p-5 rounded-xl border border-white/20">
+                <i className="fa-solid fa-plug text-emerald-400 text-xl mb-3"></i>
+                <h4 className="font-bold mb-1">Onboarding (AI 80%)</h4>
+                <p className="text-xs text-slate-300">Zero manual fulfillment. Users connect Stripe via OAuth. AI automatically monitors webhooks.</p>
+              </div>
+              <div className="bg-white/10 p-5 rounded-xl border border-white/20">
+                <i className="fa-solid fa-triangle-exclamation text-purple-400 text-xl mb-3"></i>
+                <h4 className="font-bold mb-1">Human-In-The-Loop</h4>
+                <p className="text-xs text-slate-300">Monitor Stripe chargebacks/fraud. Review OSS thresholds. Do not let AI alter production payout routing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function MetricCard({ title, value, subtitle, icon, color }) {
+      return (
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <div className="flex justify-between items-start mb-4">
+            <h4 className="text-sm font-medium text-slate-500">{title}</h4>
+            <i className={`${icon} ${color} text-lg`}></i>
+          </div>
+          <h2 className="text-2xl font-bold text-slate-800">{value}</h2>
+          <p className="text-xs text-slate-400 mt-1">{subtitle}</p>
+        </div>
+      );
+    }
+
+    function TimelineItem({ title, status, desc }) {
+      const isComplete = status === 'complete';
+      const isCurrent = status === 'current';
+      return (
+        <div className="flex items-start pl-8 relative group">
+          <div className={`absolute left-0 top-1 w-8 h-8 -ml-4 flex items-center justify-center rounded-full border-4 border-slate-50 transition-colors ${
+            isComplete ? 'bg-emerald-500' : isCurrent ? 'bg-indigo-600' : 'bg-slate-300'
+          }`}>
+            {isComplete && <i className="fa-solid fa-check text-white text-xs"></i>}
+            {isCurrent && <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>}
+          </div>
+          <div className={`p-4 rounded-xl border flex-1 ${isCurrent ? 'bg-indigo-50 border-indigo-200 shadow-sm' : 'bg-white border-slate-200'}`}>
+            <h4 className={`font-bold text-sm ${isCurrent ? 'text-indigo-900' : 'text-slate-800'}`}>{title}</h4>
+            <p className={`text-xs mt-1 ${isCurrent ? 'text-indigo-700' : 'text-slate-500'}`}>{desc}</p>
+          </div>
+        </div>
+      );
+    }
+
+    function Badge({ children, color }) {
+      return (
+        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${color}`}>
+          {children}
+        </span>
+      );
+    }
+
+    function InfoTooltip({ label, content }) {
+      return (
+        <span className="relative group cursor-help inline-block z-20">
+          <span className="border-b border-dashed border-slate-400 text-inherit font-inherit">{label}</span>
+          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-64 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-xl leading-relaxed text-left">
+            {content}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></span>
+          </span>
+        </span>
+      );
+    }
+
+    function ExpandableCard({ title, badge, summary, children, defaultOpen = false }) {
+      const [isOpen, setIsOpen] = useState(defaultOpen);
+      return (
+        <div className={`border rounded-xl transition-all duration-200 overflow-hidden ${isOpen ? 'border-indigo-200 shadow-md ring-1 ring-indigo-50' : 'border-slate-200 shadow-sm hover:border-slate-300'}`}>
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full text-left p-5 bg-white flex items-start justify-between focus:outline-none"
+          >
+            <div className="pr-4">
+              <div className="flex items-center space-x-3 mb-2">
+                <h4 className="font-bold text-slate-800">{title}</h4>
+                {badge}
+              </div>
+              <p className="text-sm text-slate-500">{summary}</p>
+            </div>
+            <div className={`p-2 rounded-full transition-colors ${isOpen ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-50 text-slate-400'}`}>
+              <i className={`fa-solid ${isOpen ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+            </div>
+          </button>
+          {isOpen && (
+            <div className="p-5 bg-slate-50 border-t border-slate-100">
+              {children}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
