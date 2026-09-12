@@ -1,272 +1,927 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MTI — Web Projects</title>
+<!--
+════════════════════════════════════════════════════════════════════════
+  MIHAI TINCA — PERSONAL LANDING PAGE (rebuild v6)
+
+  ✦ WHAT'S FIXED IN v6 — CONTACT / EMAIL FUNCTIONALITY
+    · ONE CONFIG TO RULE THEM ALL: edit SITE_CONFIG.email / .github at
+      the top of the <script> and EVERY mailto / GitHub link on the page
+      updates automatically (static hrefs remain as no-JS fallback).
+    · "Get in touch" now scrolls to the contact panel AND focuses the
+      form so it's obvious what to do next.
+    · Contact panel with a working form:
+        - default mode: composes a pre-filled email (subject + body)
+          in the visitor's mail app via mailto: — 100% static-friendly
+        - optional mode: set FORM_ENDPOINT (Formspree / Web3Forms /
+          Basin…) and the same form POSTs over fetch and sends email
+          without any mail client. Hook already wired.
+    · "Copy email" button: Clipboard API on HTTPS (GitHub Pages is
+      HTTPS by default) + execCommand/prompt fallbacks + "Copied ✓"
+      feedback — so contact works even with no mail client installed.
+    · Live status line under the form for send/copy feedback.
+
+  ✔ WILL IT RUN ON GITHUB PAGES?  YES — it's a single static index.html:
+    no build step, no server, no dependencies to install. Theme toggle
+    (localStorage), animations, clipboard, mailto and the optional
+    form-endpoint fetch all run client-side in the browser.
+    Just drop this file in as index.html of your Pages repo.
+
+  ★ STILL OPEN — QUESTIONS FOR YOU:
+  1) REAL EMAIL — SITE_CONFIG.email is still the placeholder
+     hello@mihaitinca.com. Tell me the real one (or confirm it).
+  2) LINKS — subpage hrefs still guessed (search "TODO-URL").
+     Send your current index.html or the real URLs.
+  3) FORM ENDPOINT — want me to wire Formspree/Web3Forms for real
+     inbox delivery (free tiers), or keep mailto-only?
+  4) ABOUT — real bio, role, city, photo?
+  5) PRIVATE LAB teaser card — keep or hide?
+════════════════════════════════════════════════════════════════════════
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Mihai Tinca — A home for every project I ship</title>
+<meta name="description" content="Personal index of AI-generated web apps, dashboards, tools and experiments by Mihai Tinca.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%238b7bff'/><offset offset='1' stop-color='%234dd8ff'/></linearGradient></defs><rect width='100' height='100' rx='24' fill='%236d5cff'/><text x='50' y='68' font-size='46' font-family='Arial' font-weight='bold' text-anchor='middle' fill='%23ffffff'>MT</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/space-grotesk@latest/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/jetbrains-mono@latest/index.css">
+<script>
+/* Early theme boot — LIGHT is the default; only an explicit saved choice overrides */
+(function(){
+  document.documentElement.classList.add('js');
+  var themeName = 'light';
+  try{
+    var savedTheme = localStorage.getItem('mt-theme');
+    if(savedTheme === 'dark' || savedTheme === 'light') themeName = savedTheme;
+  }catch(err){ /* private mode */ }
+  document.documentElement.setAttribute('data-theme', themeName);
+  var ms = document.querySelector('meta[name="color-scheme"]');
+  if(ms) ms.setAttribute('content', themeName);
+})();
+</script>
 <style>
-  :root {
-    --bg: #f4f6fb;
-    --bg-grad-1: #eef2ff;
-    --bg-grad-2: #f0fdfa;
-    --text: #0f172a;
-    --muted: #64748b;
-    --accent: #4f46e5;
-    --accent-2: #0ea5a4;
-    --card-bg: #ffffff;
-    --card-border: rgba(15,23,42,0.06);
-    --shadow: 0 20px 45px -15px rgba(30,41,59,0.15);
-    --shadow-hover: 0 25px 55px -12px rgba(79,70,229,0.35);
-  }
-  [data-theme="dark"] {
-    --bg: #0a0e1a;
-    --bg-grad-1: #0f1428;
-    --bg-grad-2: #0a1f1c;
-    --text: #eef2ff;
-    --muted: #94a3c7;
-    --accent: #818cf8;
-    --accent-2: #2dd4bf;
-    --card-bg: #131a2e;
-    --card-border: rgba(255,255,255,0.08);
-    --shadow: 0 20px 45px -15px rgba(0,0,0,0.5);
-    --shadow-hover: 0 25px 60px -12px rgba(129,140,248,0.4);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body {
-    font-family: 'Segoe UI', ui-sans-serif, system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text);
-    min-height: 100vh;
-    background:
-      radial-gradient(900px 500px at 15% -5%, var(--bg-grad-1), transparent 60%),
-      radial-gradient(900px 500px at 100% 10%, var(--bg-grad-2), transparent 55%),
-      var(--bg);
-    transition: background 0.4s ease, color 0.4s ease;
-    overflow-x: hidden;
-  }
-  .noise {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.03;
-    background-image: radial-gradient(circle at 1px 1px, #000 1px, transparent 0);
-    background-size: 22px 22px;
-    z-index: 0;
-  }
-  .wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
-  }
-  .nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 3.5rem;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-  }
-  .mark {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    background: linear-gradient(140deg, var(--accent), var(--accent-2));
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; color: #fff; font-size: 1rem;
-    box-shadow: 0 10px 25px -6px rgba(79,70,229,0.5);
-  }
-  .brand-name { font-weight: 800; font-size: 1.05rem; letter-spacing: 0.3px; }
-  .brand-sub { font-size: 0.78rem; color: var(--muted); }
-  .toggle {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    border: 1px solid var(--card-border);
-    background: var(--card-bg);
-    padding: 0.5rem 0.95rem;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: var(--text);
-    box-shadow: var(--shadow);
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
-  }
-  .toggle:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-  .hero { text-align: center; margin-bottom: 3.5rem; }
-  .eyebrow {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    margin-bottom: 1.1rem;
-  }
-  .hero h1 {
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.5px;
-    margin-bottom: 0.9rem;
-    background: linear-gradient(120deg, var(--text), var(--accent) 60%, var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .hero p {
-    color: var(--muted);
-    font-size: 1.05rem;
-    max-width: 560px;
-    margin: 0 auto;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.4rem;
-  }
-  .card {
-    position: relative;
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 1.6rem;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease, border-color 0.25s ease;
-  }
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-  .card:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: var(--shadow-hover);
-    border-color: color-mix(in srgb, var(--accent) 40%, var(--card-border));
-  }
-  .card:hover::before { opacity: 1; }
-  .card-icon {
-    width: 46px; height: 46px;
-    border-radius: 12px;
-    background: linear-gradient(140deg, var(--accent), var(--accent-2));
-    margin-bottom: 1rem;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem;
-  }
-  .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; position: relative; z-index: 1; }
-  .card-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin-bottom: 1.1rem; position: relative; z-index: 1; }
-  .card-foot {
-    display: flex; align-items: center; justify-content: space-between;
-    position: relative; z-index: 1;
-  }
-  .pill {
-    display: inline-flex; align-items: center; gap: 0.35rem;
-    font-size: 0.72rem; font-weight: 700;
-    color: var(--accent-2);
-    background: color-mix(in srgb, var(--accent-2) 14%, transparent);
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-  }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 25%, transparent); }
-  .arrow { color: var(--muted); font-size: 1.1rem; transition: transform 0.2s ease, color 0.2s ease; }
-  .card:hover .arrow { transform: translateX(4px); color: var(--accent); }
-  .footer {
-    margin-top: 3.5rem;
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
+:root{
+  --bg:#07070c;
+  --text:#eceaf4;
+  --muted:#9d9bb0;
+  --faint:#6b6980;
+  --border:rgba(255,255,255,.09);
+  --surface:rgba(255,255,255,.035);
+  --card-hover:rgba(255,255,255,.05);
+  --private-hover:rgba(255,255,255,.02);
+  --glass:rgba(7,7,12,.75);
+  --marquee-bg:rgba(255,255,255,.015);
+  --grid-line:rgba(255,255,255,.045);
+  --accent:#8b7bff;
+  --accent-2:#4dd8ff;
+  --mint:#5df2c0;
+  --grad:linear-gradient(115deg,#8b7bff 0%,#4dd8ff 55%,#5df2c0 100%);
+  --btn-ink:#0a0a12;
+  --input-bg:rgba(255,255,255,.04);
+  --focus-ring:rgba(139,123,255,.2);
+  --blob-opacity:.42;
+  --noise-opacity:.05;
+  --spotlight:rgba(139,123,255,.13);
+  --card-shadow:0 24px 50px -24px rgba(0,0,0,.7);
+  --scroll-thumb:rgba(255,255,255,.12);
+  --moto-shadow:rgba(0,0,0,.5);
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','SFMono-Regular',monospace;
+}
+[data-theme="light"]{
+  --bg:#f6f6fb;
+  --text:#191930;
+  --muted:#565470;
+  --faint:#8d8ba4;
+  --border:rgba(25,25,48,.12);
+  --surface:rgba(255,255,255,.62);
+  --card-hover:rgba(255,255,255,.88);
+  --private-hover:rgba(25,25,48,.03);
+  --glass:rgba(246,246,251,.82);
+  --marquee-bg:rgba(25,25,48,.02);
+  --grid-line:rgba(25,25,48,.055);
+  --accent:#6d5cff;
+  --accent-2:#0e93c9;
+  --mint:#0aa87c;
+  --grad:linear-gradient(115deg,#6d5cff 0%,#0ea5c9 55%,#12b98d 100%);
+  --btn-ink:#ffffff;
+  --input-bg:rgba(255,255,255,.85);
+  --focus-ring:rgba(109,92,255,.18);
+  --blob-opacity:.26;
+  --noise-opacity:.03;
+  --spotlight:rgba(109,92,255,.14);
+  --card-shadow:0 24px 50px -24px rgba(25,25,48,.28);
+  --scroll-thumb:rgba(25,25,48,.2);
+  --moto-shadow:rgba(25,25,48,.32);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--font-body);
+  line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  transition:background-color .45s ease,color .45s ease;
+}
+.pill,.chip,.terminal,.facts,.icon-btn,.social,.marquee,.fact,.tag,.term-body,.contact-panel,.field input,.field textarea{
+  transition:background-color .45s ease,border-color .45s ease,color .45s ease;
+}
+::selection{background:var(--accent);color:var(--btn-ink)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:8px;border:2px solid var(--bg)}
+a{color:inherit}
+svg{display:block}
+
+/* ── Backdrop ─────────────────────────────── */
+.backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.grid-layer{position:absolute;inset:0;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 95% 75% at 50% 0%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(ellipse 95% 75% at 50% 0%,#000 35%,transparent 100%);
+}
+.blob{position:absolute;border-radius:50%;filter:blur(110px);opacity:var(--blob-opacity);transition:opacity .45s;animation:drift 20s ease-in-out infinite alternate}
+.blob-1{width:540px;height:540px;background:#5b4bff;top:-180px;left:-140px}
+.blob-2{width:460px;height:460px;background:#0e92c9;top:6%;right:-180px;animation-delay:-7s}
+.blob-3{width:440px;height:440px;background:#7c3aed;bottom:-160px;left:32%;animation-delay:-13s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(50px,36px) scale(1.12)}}
+.noise{position:absolute;inset:0;opacity:var(--noise-opacity);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── Nav ──────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:18px clamp(20px,4vw,48px);transition:padding .35s,background-color .35s,border-color .35s;border-bottom:1px solid transparent}
+nav.scrolled{padding:11px clamp(20px,4vw,48px);background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom-color:var(--border)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.monogram{width:38px;height:38px;border-radius:12px;background:var(--grad);display:grid;place-items:center;
+  font-family:var(--font-display);font-weight:700;font-size:.95rem;color:var(--btn-ink);box-shadow:0 6px 20px -6px rgba(139,123,255,.6)}
+.logo-name{font-family:var(--font-display);font-weight:600;letter-spacing:-.02em;font-size:1.02rem}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-links{display:flex;gap:24px;list-style:none;margin-right:8px}
+.nav-links a{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);text-decoration:none;letter-spacing:.04em;transition:color .25s;position:relative}
+.nav-links a::after{content:'';position:absolute;left:0;bottom:-5px;width:0;height:1px;background:var(--accent-2);transition:width .3s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{width:100%}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;
+  color:var(--muted);text-decoration:none;background:var(--surface);cursor:pointer;transition:color .3s,border-color .3s,transform .3s,background-color .3s}
+.icon-btn:hover{color:var(--text);border-color:var(--accent);transform:translateY(-2px)}
+.icon-btn svg{width:18px;height:18px}
+#themeToggle .icon-moon{display:none}
+[data-theme="light"] #themeToggle .icon-sun{display:none}
+[data-theme="light"] #themeToggle .icon-moon{display:block}
+@media(max-width:760px){.nav-links{display:none}}
+
+/* ── 🏍️ CBR1000RR Fireblade — tiny pseudo-3D ride-by ── */
+.moto-strip{position:relative;width:min(340px,82vw);height:46px;margin:0 auto 8px;overflow:hidden}
+.moto-road{position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:2px;
+  background:repeating-linear-gradient(90deg,var(--faint) 0 12px,transparent 12px 26px);
+  opacity:.55;animation:road-scroll .55s linear infinite}
+@keyframes road-scroll{from{background-position:0 0}to{background-position:-26px 0}}
+.moto{position:absolute;bottom:1px;left:0;width:52px;height:40px;perspective:260px;
+  animation:ride 6.5s linear infinite}
+@keyframes ride{
+  0%{left:-64px;opacity:0}
+  5%{opacity:1}
+  92%{opacity:1}
+  100%{left:100%;opacity:0}
+}
+.moto-bike{position:absolute;bottom:0;left:0;width:52px;height:auto;
+  transform:rotateX(7deg) rotateY(-8deg);
+  animation:bob .5s ease-in-out infinite alternate}
+@keyframes bob{
+  from{transform:rotateX(7deg) rotateY(-8deg) translateY(0) rotate(0deg)}
+  to{transform:rotateX(7deg) rotateY(-8deg) translateY(-2px) rotate(-1.3deg)}
+}
+.moto-shadow{position:absolute;bottom:-3px;left:50%;width:58px;height:9px;border-radius:50%;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,var(--moto-shadow) 0%,transparent 70%);
+  animation:shadow-pulse .5s ease-in-out infinite alternate}
+@keyframes shadow-pulse{
+  from{transform:translateX(-50%) scaleX(1);opacity:1}
+  to{transform:translateX(-50%) scaleX(.8);opacity:.55}
+}
+.moto-spin{transform-box:fill-box;transform-origin:center;animation:moto-wheel-spin .32s linear infinite}
+@keyframes moto-wheel-spin{to{transform:rotate(360deg)}}
+.speed-fly{animation:speed-fly .5s linear infinite}
+@keyframes speed-fly{
+  0%{transform:translateX(6px);opacity:0}
+  35%{opacity:.9}
+  100%{transform:translateX(-9px);opacity:0}
+}
+
+/* ── Hero ─────────────────────────────────── */
+.hero{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:140px 24px 90px;position:relative}
+.pill{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:999px;
+  padding:8px 18px;font-family:var(--font-mono);font-size:12px;color:var(--muted);background:var(--surface);backdrop-filter:blur(8px)}
+.pill .live-dot{width:8px;height:8px;border-radius:50%;background:#34e58b;animation:pulse-ring 2s infinite}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(52,229,139,.5)}70%{box-shadow:0 0 0 8px rgba(52,229,139,0)}100%{box-shadow:0 0 0 0 rgba(52,229,139,0)}}
+.hero h1{font-family:var(--font-display);font-weight:700;font-size:clamp(2.7rem,6.8vw,4.9rem);
+  letter-spacing:-.035em;line-height:1.06;margin:26px 0 0;max-width:900px}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  background-size:200% auto;animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.tagline{max-width:620px;color:var(--muted);font-size:1.08rem;margin-top:22px}
+.tagline strong{color:var(--text);font-weight:600}
+.terminal{margin-top:30px;display:inline-flex;align-items:center;max-width:100%;
+  border:1px solid var(--border);border-radius:12px;background:var(--surface);backdrop-filter:blur(8px);overflow:hidden}
+.term-bar{display:flex;gap:6px;padding:10px 12px;border-right:1px solid var(--border)}
+.term-bar i{width:9px;height:9px;border-radius:50%;background:#ff5f57}
+.term-bar i:nth-child(2){background:#febc2e}
+.term-bar i:nth-child(3){background:#28c840}
+.term-body{padding:10px 16px;font-family:var(--font-mono);font-size:12.5px;color:var(--muted);white-space:nowrap;overflow-x:auto}
+.term-prompt{color:var(--mint)}
+.term-path{color:var(--accent-2)}
+.rotator-word{color:var(--text);font-weight:600;display:inline-block;transition:opacity .3s,transform .3s}
+.rotator-word.out{opacity:0;transform:translateY(7px)}
+.caret{color:var(--accent-2);animation:blink 1.1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.hero-ctas{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:999px;
+  font-family:var(--font-display);font-weight:600;font-size:.95rem;text-decoration:none;transition:.3s;border:1px solid transparent;cursor:pointer}
+.btn svg{width:17px;height:17px}
+.btn-primary{background:var(--grad);color:var(--btn-ink);box-shadow:0 10px 30px -10px rgba(139,123,255,.55)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 40px -10px rgba(77,216,255,.55)}
+.btn-ghost{border-color:var(--border);color:var(--text);background:var(--surface);backdrop-filter:blur(8px)}
+.btn-ghost:hover{border-color:var(--accent);transform:translateY(-3px);background:rgba(139,123,255,.08)}
+.btn-copy.copied{border-color:var(--mint);color:var(--mint);transform:translateY(-3px)}
+.meta-chips{display:flex;gap:12px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.chip{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--border);border-radius:999px;
+  padding:8px 16px;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);background:var(--surface)}
+.chip svg{width:13px;height:13px;color:var(--accent-2)}
+.chip .colon{animation:blink 1s step-end infinite}
+.scroll-cue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;
+  align-items:center;gap:8px;color:var(--faint);font-family:var(--font-mono);font-size:10px;letter-spacing:.2em}
+.scroll-cue .line{width:1px;height:38px;background:linear-gradient(var(--accent-2),transparent);animation:drop 1.9s ease-in-out infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ── Marquee ──────────────────────────────── */
+.marquee{border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;
+  padding:13px 0;background:var(--marquee-bg)}
+.marquee-track{display:flex;width:max-content;animation:scroll-x 32s linear infinite}
+.marquee-track span{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.22em;color:var(--faint);white-space:nowrap}
+@keyframes scroll-x{to{transform:translateX(-50%)}}
+
+/* ── Sections ─────────────────────────────── */
+.section{max-width:1120px;margin:0 auto;padding:110px 24px}
+.kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.22em;color:var(--accent-2);
+  text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.kicker::before{content:'';width:30px;height:1px;background:linear-gradient(90deg,var(--accent-2),transparent)}
+.section-head h2{font-family:var(--font-display);font-size:clamp(2rem,4.2vw,2.9rem);font-weight:700;
+  letter-spacing:-.025em;margin-top:14px}
+.section-head p{color:var(--muted);max-width:560px;margin-top:12px}
+.section-head{margin-bottom:52px}
+
+/* ── Project cards ────────────────────────── */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+.card{position:relative;display:flex;flex-direction:column;gap:15px;padding:28px;border-radius:22px;
+  background:var(--surface);border:1px solid var(--border);overflow:hidden;text-decoration:none;
+  transition:transform .35s,border-color .35s,background-color .35s,box-shadow .35s}
+.card>*{position:relative;z-index:2}
+.card::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity .4s;
+  background:radial-gradient(430px circle at var(--mx,50%) var(--my,50%),var(--spotlight),transparent 60%)}
+.card:hover{transform:translateY(-6px);border-color:rgba(139,123,255,.4);background:var(--card-hover);box-shadow:var(--card-shadow)}
+.card:hover::before{opacity:1}
+.card:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start}
+.icon-tile{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,var(--g1,#8b7bff),var(--g2,#4dd8ff));
+  box-shadow:0 10px 26px -10px var(--g1,#8b7bff);transition:transform .35s}
+.icon-tile svg{width:26px;height:26px}
+.card:hover .icon-tile{transform:scale(1.08) rotate(-4deg)}
+.card-num{font-family:var(--font-mono);font-size:12px;color:var(--faint)}
+.card h3{font-family:var(--font-display);font-size:1.28rem;font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.card .desc{color:var(--muted);font-size:.93rem;line-height:1.65;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);border:1px solid var(--border);
+  border-radius:999px;padding:4px 11px;background:var(--surface);letter-spacing:.04em}
+.card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--border)}
+.badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.badge .dot{--c:#34e58b;width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c)}
+.badge .dot.amber{--c:#fbbf24}
+.arrow-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;
+  color:var(--text);transition:.3s;flex-shrink:0}
+.arrow-btn svg{width:15px;height:15px}
+.card:hover .arrow-btn{background:var(--grad);border-color:transparent;color:var(--btn-ink);transform:translate(3px,-3px)}
+.card.private{border-style:dashed;background:transparent;cursor:default}
+.card.private:hover{transform:none;border-color:rgba(139,123,255,.25);background:var(--private-hover);box-shadow:none}
+.card.private .arrow-btn{opacity:.35}
+.card.private:hover .arrow-btn{background:transparent;border-color:var(--border);color:var(--text);transform:none}
+
+/* ── About ────────────────────────────────── */
+.about-grid{display:grid;grid-template-columns:1.25fr .85fr;gap:52px;align-items:start}
+@media(max-width:880px){.about-grid{grid-template-columns:1fr;gap:36px}}
+.about-text p{color:var(--muted);font-size:1.02rem;margin-bottom:18px;max-width:600px}
+.about-text p strong{color:var(--text);font-weight:600}
+.about-sign{font-family:var(--font-display);font-style:italic;font-size:1.4rem;margin-top:26px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.facts{border:1px solid var(--border);border-radius:22px;background:var(--surface);overflow:hidden;backdrop-filter:blur(8px)}
+.fact{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 22px;border-bottom:1px solid var(--border)}
+.fact:last-child{border-bottom:none}
+.fact .k{font-family:var(--font-mono);font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.12em}
+.fact .v{font-weight:600;font-size:.92rem;text-align:right}
+
+/* ── Footer / Contact ─────────────────────── */
+footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
+.footer-cta{max-width:1120px;margin:0 auto;padding:110px 24px 70px;text-align:center}
+.footer-cta h2{font-family:var(--font-display);font-size:clamp(2rem,4.5vw,3rem);font-weight:700;letter-spacing:-.025em}
+.footer-cta>p{color:var(--muted);max-width:520px;margin:16px auto 0}
+.contact-panel{max-width:560px;margin:38px auto 0;text-align:left;border:1px solid var(--border);border-radius:22px;
+  background:var(--surface);backdrop-filter:blur(10px);padding:26px;display:flex;flex-direction:column;gap:16px}
+.field label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);display:block;margin-bottom:7px}
+.field input,.field textarea{width:100%;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);
+  color:var(--text);padding:12px 14px;font-family:var(--font-body);font-size:.95rem;resize:vertical;
+  transition:border-color .25s,box-shadow .25s,background-color .45s}
+.field input::placeholder,.field textarea::placeholder{color:var(--faint)}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--focus-ring)}
+.contact-actions{display:flex;gap:10px;flex-wrap:wrap}
+.contact-actions .btn{padding:12px 22px;font-size:.9rem}
+.form-status{font-family:var(--font-mono);font-size:11.5px;color:var(--mint);min-height:16px;letter-spacing:.03em}
+.form-status.err{color:#ff6b6b}
+.contact-email-line{font-family:var(--font-mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.contact-email-line a{color:var(--accent-2);text-decoration:none;border-bottom:1px dashed var(--accent-2)}
+.contact-email-line a:hover{color:var(--accent)}
+.socials{display:flex;gap:12px;justify-content:center;margin-top:30px}
+.social{width:46px;height:46px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;
+  color:var(--muted);text-decoration:none;transition:.3s;background:var(--surface)}
+.social:hover{color:var(--text);border-color:var(--accent);transform:translateY(-4px);background:rgba(139,123,255,.1)}
+.social svg{width:19px;height:19px}
+.footer-bar{border-top:1px solid var(--border);max-width:1120px;margin:0 auto;padding:22px 24px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  font-family:var(--font-mono);font-size:11.5px;color:var(--faint)}
+.footer-bar a{color:var(--faint);text-decoration:none;transition:color .25s}
+.footer-bar a:hover{color:var(--accent-2)}
+
+/* ── Reveal ───────────────────────────────── */
+.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.visible{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
 </style>
 </head>
-<body>
+<body id="home">
+
+<div class="backdrop" aria-hidden="true">
+  <div class="grid-layer"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
   <div class="noise"></div>
-  <div class="wrap">
-    <nav class="nav">
-      <div class="brand">
-        <div class="mark">M</div>
-        <div>
-          <div class="brand-name">MTI</div>
-          <div class="brand-sub">Web Projects by Melcoo</div>
-        </div>
-      </div>
-      <button class="toggle" id="themeToggle" type="button">
-        <span id="toggleIcon">🌙</span>
-        <span id="toggleLabel">Dark</span>
-      </button>
-    </nav>
-    <section class="hero">
-      <span class="eyebrow">Personal portal</span>
-      <h1>A home for every project I ship</h1>
-      <p>Small, self‑contained web apps — dashboards, tools, and experiments — collected in one place.</p>
-    </section>
-    <main class="grid">
-      <a class="card" href="world-clock/" target="_blank" rel="noopener">
-        <div class="card-icon">🕒</div>
-        <div class="card-title">World Clock</div>
-        <div class="card-desc">Live time across major world cities, refreshing every second in real time.</div>
-        <div class="card-foot">
-          <span class="pill"><span class="dot"></span>Live</span>
-          <span class="arrow">→</span>
-        </div>
-      </a>
-      <a class="card" href="srl-launchpad/" target="_blank" rel="noopener">
-        <div class="card-icon">🧮</div>
-        <div class="card-title">SRL Launchpad 2026</div>
-        <div class="card-desc">Interactive Romanian tax calculator comparing microîntreprindere vs. impozit pe profit scenarios for a new SRL.</div>
-        <div class="card-foot">
-          <span class="pill"><span class="dot"></span>Interactive</span>
-          <span class="arrow">→</span>
-        </div>
-      </a>
-      <a class="card" href="micro-saas-research/" target="_blank" rel="noopener">
-        <div class="card-icon">📊</div>
-        <div class="card-title">Micro‑SaaS &amp; Agentic AI Research</div>
-        <div class="card-desc">Market research on Micro‑SaaS growth, agentic AI business models, pricing trends, and solo‑founder case studies.</div>
-        <div class="card-foot">
-          <span class="pill"><span class="dot"></span>Report</span>
-          <span class="arrow">→</span>
-        </div>
-      </a>
-      <a class="card" href="AI-Invoice-Micro-SaaS/" target="_blank" rel="noopener">
-        <div class="card-icon">💳</div>
-        <div class="card-title">AI Invoice Micro-SaaS</div>
-        <div class="card-desc">One-Man Band OS dashboard covering fiscal setup, concept filtration, architecture, budget, and launch phases.</div>
-        <div class="card-foot">
-          <span class="pill"><span class="dot"></span>Dashboard</span>
-          <span class="arrow">→</span>
-        </div>
-      </a>
-    </main>
-    <div class="footer">More projects landing soon.</div>
+</div>
+
+<!-- ══ NAV ═ -->
+<nav id="mainNav">
+  <a class="logo" href="#home" aria-label="Home">
+    <span class="monogram">MT</span>
+    <span class="logo-name">Mihai Tinca</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle light/dark theme" title="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <a class="icon-btn" data-github href="https://github.com/melcoo" target="_blank" rel="noopener" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.18-1.49 3.14-1.18 3.14-1.18.63 1.59.23 2.76.12 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.54-.01 2.79-.01 3.17 0 .31.2.67.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+    </a>
   </div>
-  <script>
-    const root = document.documentElement;
-    const btn = document.getElementById('themeToggle');
-    const icon = document.getElementById('toggleIcon');
-    const label = document.getElementById('toggleLabel');
-    function apply(theme) {
-      root.setAttribute('data-theme', theme);
-      localStorage.setItem('mti-theme', theme);
-      if (theme === 'dark') { icon.textContent = '☀️'; label.textContent = 'Light'; }
-      else { icon.textContent = '🌙'; label.textContent = 'Dark'; }
+</nav>
+
+<!-- ══ HERO ══ -->
+<header class="hero">
+
+  <!-- 🏍️ CBR1000RR Fireblade (HRC tricolor) — tiny pseudo-3D ride-by -->
+  <div class="moto-strip reveal" aria-hidden="true">
+    <div class="moto-road"></div>
+    <div class="moto">
+      <div class="moto-shadow"></div>
+      <svg class="moto-bike" viewBox="0 0 100 48" fill="none">
+        <defs>
+          <linearGradient id="fairingRed" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ff5a4a"/>
+            <stop offset=".45" stop-color="#e01616"/>
+            <stop offset="1" stop-color="#8f0d0d"/>
+          </linearGradient>
+          <linearGradient id="bluePanel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3b82f6"/>
+            <stop offset=".55" stop-color="#1e4fd0"/>
+            <stop offset="1" stop-color="#12368a"/>
+          </linearGradient>
+          <linearGradient id="titanium" x1="1" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#8b93a1"/>
+            <stop offset=".5" stop-color="#c6ccd6"/>
+            <stop offset="1" stop-color="#f2f4f7"/>
+          </linearGradient>
+          <linearGradient id="screenClear" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffffff" stop-opacity=".8"/>
+            <stop offset="1" stop-color="#cfdbe6" stop-opacity=".35"/>
+          </linearGradient>
+        </defs>
+        <g stroke="#ff9384" stroke-width="1.5" stroke-linecap="round">
+          <path class="speed-fly" d="M2 20h7" style="animation-delay:0s"/>
+          <path class="speed-fly" d="M0 26h9.5" style="animation-delay:.16s"/>
+          <path class="speed-fly" d="M3 32h6.5" style="animation-delay:.32s"/>
+        </g>
+        <path d="M73.4 32 69 17.8" stroke="#8a6a2a" stroke-width="1.7" stroke-linecap="round" opacity=".85"/>
+        <path d="M13 17.5 4.5 16.2" stroke="#17181d" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4.5 16.2 3 20.2" stroke="#17181d" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M26 32 46 29.5" stroke="#17181d" stroke-width="3" stroke-linecap="round"/>
+        <path d="M26 32 45.5 30.8" stroke="#0e0e14" stroke-width="1" stroke-dasharray="1.6 1.6"/>
+        <path d="M11 12.5 26 17.5 40 19 46 14.5 58 14 66 15.5 84 18 91.5 22 86 28.5 78 31.5 62 33 50 32.5 44 27.5 30 22 13 16.5Z"
+              fill="url(#fairingRed)" stroke="#5e0a0a" stroke-width=".5" stroke-linejoin="round"/>
+        <path d="M13 13.8 24 17 24 18 13.4 15Z" fill="#1e4fd0"/>
+        <path d="M14 15.4 24 18.4 24 19.6 14.6 16.8Z" fill="#f5f6fa"/>
+        <path d="M43.5 16.2 56 14.9 56 16.2 43.8 17.6Z" fill="#1e4fd0"/>
+        <path d="M44 17.8 56 16.5 56 17.8 44.2 19.2Z" fill="#f5f6fa"/>
+        <path d="M47 15.4 57 14.6" stroke="#ffffff" stroke-width=".9" opacity=".4" stroke-linecap="round"/>
+        <path d="M25 17.5 40 19.5 40 21.5 26 20Z" fill="#17181d"/>
+        <path d="M45 24 58 23.5 60 30 50 31.5 45 28Z" fill="#1c1d24"/>
+        <circle cx="52" cy="27.5" r="4" fill="#23242c" stroke="#3a3d46" stroke-width=".8"/>
+        <circle cx="52" cy="27.5" r="1.6" fill="#4b5563"/>
+        <path d="M60 22 78 19.5 84 26 76 31 62 30Z" fill="url(#bluePanel)"/>
+        <path d="M64 21.5 70 20.8 66 30 60.5 29.5Z" fill="#f5f6fa"/>
+        <path d="M72 20.3 75.5 19.9 71 30.6 67.8 30.3Z" fill="#f5f6fa" opacity=".95"/>
+        <path d="M46 33.5 62 34.5 76 32 74 35.5 60 37.5 47 36.5Z" fill="#c01414"/>
+        <text x="51.5" y="36.3" font-family="Arial, Helvetica, sans-serif" font-size="3.1" font-weight="700"
+              fill="#f5f6fa" letter-spacing=".4" opacity=".95" transform="rotate(-2 51.5 36.3)">HONDA</text>
+        <path d="M85.5 20.8 90.8 22.6 89.4 24.8 84.5 23Z" fill="#0d131e"/>
+        <path d="M78 18.2 85 19.4 84.3 21 77.5 19.8Z" fill="#0d131e"/>
+        <path d="M78.8 19 84 19.9" stroke="#9be9ff" stroke-width=".9" stroke-linecap="round" opacity=".9"/>
+        <path d="M74 12 77 9.6" stroke="#17181d" stroke-width="1.2" stroke-linecap="round"/>
+        <ellipse cx="77.9" cy="9" rx="1.7" ry="1" fill="#17181d"/>
+        <path d="M60 14.2 72 8.5 84 17.8 66 15.5Z" fill="url(#screenClear)" stroke="rgba(255,255,255,.6)" stroke-width=".8" stroke-linejoin="round"/>
+        <g>
+          <circle cx="26" cy="32" r="10" stroke="#17181d" stroke-width="4.2"/>
+          <g class="moto-spin">
+            <circle cx="26" cy="32" r="7.9" stroke="#565b66" stroke-width=".5" opacity=".6"/>
+            <circle cx="26" cy="32" r="7.2" stroke="#1f2027" stroke-width="1.8"/>
+            <circle cx="26" cy="32" r="3.6" stroke="#c3cad6" stroke-width="1" stroke-dasharray="1.8 1.6"/>
+            <path d="M26 32l7 0M26 32l3.5 6.06M26 32l-3.5 6.06M26 32l-7 0M26 32l-3.5-6.06M26 32l3.5-6.06" stroke="#2a2b33" stroke-width="1.3"/>
+            <circle cx="26" cy="32" r="1.4" fill="#c3cad6" stroke="none"/>
+          </g>
+          <path d="M29 30l2.5 1" stroke="#d9a441" stroke-width="1.4" stroke-linecap="round"/>
+        </g>
+        <g>
+          <circle cx="76" cy="32" r="10" stroke="#17181d" stroke-width="4.2"/>
+          <g class="moto-spin">
+            <circle cx="76" cy="32" r="7.9" stroke="#565b66" stroke-width=".5" opacity=".6"/>
+            <circle cx="76" cy="32" r="7.2" stroke="#1f2027" stroke-width="1.8"/>
+            <circle cx="76" cy="32" r="4.4" stroke="#c3cad6" stroke-width="1.1" stroke-dasharray="2 1.6"/>
+            <path d="M76 32l7 0M76 32l3.5 6.06M76 32l-3.5 6.06M76 32l-7 0M76 32l-3.5-6.06M76 32l3.5-6.06" stroke="#2a2b33" stroke-width="1.3"/>
+            <circle cx="76" cy="32" r="1.4" fill="#c3cad6" stroke="none"/>
+          </g>
+          <path d="M71 28.5l3 1" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <path d="M17.8 26.4A11.2 11.2 0 0 1 34.6 27.4" stroke="#17181d" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M66.5 27.5 74.5 20.8 84 26.5 82 28.2 75 23.6 68.5 29Z" fill="#c81616"/>
+        <path d="M68.5 26.8 74.8 21.8" stroke="#ff8d7d" stroke-width=".8" opacity=".55"/>
+        <path d="M76 32 71.5 16.8" stroke="#d9a441" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="76" cy="32" r="1.2" fill="#c3cad6" stroke="none"/>
+        <path d="M48 30 51 31.5" stroke="#aab2c0" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M50 33C46 34.5 45 34.8 43.5 34.6" stroke="#b9c0cc" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M51 34C47.5 35.6 46 35.8 44.6 35.4" stroke="#98a0ac" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M45.6 32 27.6 20.5 24.4 25.5 42.4 37Z" fill="url(#titanium)" stroke="#7c8492" stroke-width=".4" stroke-linejoin="round"/>
+        <path d="M27.6 20.5 24.4 25.5" stroke="#6f7683" stroke-width="1"/>
+        <path d="M27.2 21.2 24.9 24.9" stroke="#3a3f4a" stroke-width="1.6"/>
+        <path d="M44.8 32.6 28.4 21.6" stroke="#ffffff" stroke-width=".9" opacity=".55" stroke-linecap="round"/>
+        <path d="M34 26.6 32.2 27.8" stroke="#3b82f6" stroke-width="1.3" stroke-linecap="round"/>
+        <path d="M35.5 27.6 33.7 28.8" stroke="#9aa2ae" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <span class="pill reveal" style="transition-delay:.05s"><span class="live-dot"></span> personal site · project index</span>
+  <h1 class="reveal" style="transition-delay:.1s">A home for every<br><span class="grad-text">project I ship.</span></h1>
+  <p class="tagline reveal" style="transition-delay:.18s">
+    I'm <strong>Mihai Tinca</strong>. I build small, self-contained web apps — dashboards,
+    tools and experiments, most of them co-created with AI. Everything public lives right here.
+  </p>
+  <div class="terminal reveal" style="transition-delay:.26s">
+    <span class="term-bar"><i></i><i></i><i></i></span>
+    <span class="term-body"><span class="term-prompt">mihai@tinca</span>:<span class="term-path">~/projects</span>$ deploy <span id="rotatorWord" class="rotator-word">world-clock</span><span class="caret">▋</span></span>
+  </div>
+  <div class="hero-ctas reveal" style="transition-delay:.34s">
+    <a class="btn btn-primary" href="#projects">
+      Explore projects
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </a>
+    <!-- FIXED: scrolls to contact panel and focuses the form -->
+    <a class="btn btn-ghost" href="#contact" id="getInTouch">Get in touch</a>
+  </div>
+  <div class="meta-chips reveal" style="transition-delay:.42s">
+    <span class="chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+      <span id="heroClock">--<span class="colon">:</span>--<span class="colon">:</span>--</span>&nbsp;Bucharest
+    </span>
+    <span class="chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      <span id="projectCount">4</span>&nbsp;public projects
+    </span>
+    <span class="chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      Romania
+    </span>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"><div class="line"></div>SCROLL</div>
+</header>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>AI-GENERATED ✦ SELF-CONTAINED ✦ DASHBOARDS ✦ TAX TOOLS ✦ MARKET RESEARCH ✦ MICRO-SAAS ✦ MOTORCYCLES ✦ EXPERIMENTS ✦ GITHUB PAGES ✦ RIDE &amp; SHIP ✦&nbsp;</span>
+    <span>AI-GENERATED ✦ SELF-CONTAINED ✦ DASHBOARDS ✦ TAX TOOLS ✦ MARKET RESEARCH ✦ MICRO-SAAS ✦ MOTORCYCLES ✦ EXPERIMENTS ✦ GITHUB PAGES ✦ RIDE &amp; SHIP ✦&nbsp;</span>
+  </div>
+</div>
+
+<main>
+<!-- ══ PROJECTS ══ -->
+<section class="section" id="projects">
+  <div class="section-head reveal">
+    <span class="kicker">01 / The Index</span>
+    <h2>Projects &amp; apps</h2>
+    <p>Every public build, in one place. Open a card to launch the app — they run entirely in your browser.</p>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- TODO-URL: replace href="world-clock/" with the real path -->
+    <a class="card reveal" href="world-clock/" style="--g1:#22d3ee;--g2:#3b82f6">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+        </div>
+        <span class="card-num">01</span>
+      </div>
+      <h3>World Clock</h3>
+      <p class="desc">Live time across major world cities, refreshing every second in real time.</p>
+      <div class="tags"><span class="tag">Realtime</span><span class="tag">Utility</span><span class="tag">Vanilla JS</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>LIVE</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
+
+    <!-- TODO-URL: replace href="srl-launchpad/" with the real path -->
+    <a class="card reveal" href="srl-launchpad/" style="--g1:#34d399;--g2:#059669;transition-delay:.09s">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18.2h3.5"/></svg>
+        </div>
+        <span class="card-num">02</span>
+      </div>
+      <h3>SRL Launchpad 2026</h3>
+      <p class="desc">Interactive Romanian tax calculator comparing microîntreprindere vs. impozit pe profit scenarios for a new SRL.</p>
+      <div class="tags"><span class="tag">Romania</span><span class="tag">Taxes</span><span class="tag">Calculator</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>INTERACTIVE</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
+
+    <!-- TODO-URL: replace href="micro-saas-research/" with the real path -->
+    <a class="card reveal" href="micro-saas-research/" style="--g1:#a78bfa;--g2:#7c3aed;transition-delay:.18s">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="12" width="3.5" height="8" rx="1"/><rect x="10.2" y="6" width="3.5" height="14" rx="1"/><rect x="16.4" y="9.5" width="3.5" height="10.5" rx="1"/></svg>
+        </div>
+        <span class="card-num">03</span>
+      </div>
+      <h3>Micro-SaaS &amp; Agentic AI Research</h3>
+      <p class="desc">Market research on Micro-SaaS growth, agentic AI business models, pricing trends and solo-founder case studies.</p>
+      <div class="tags"><span class="tag">Research</span><span class="tag">AI</span><span class="tag">Report</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>REPORT</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
+
+    <!-- TODO-URL: replace href="ai-invoice/" with the real path -->
+    <a class="card reveal" href="ai-invoice/" style="--g1:#fbbf24;--g2:#f97316;transition-delay:.27s">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
+        </div>
+        <span class="card-num">04</span>
+      </div>
+      <h3>AI Invoice Micro-SaaS</h3>
+      <p class="desc">One-Man Band OS dashboard covering fiscal setup, concept filtration, architecture, budget and launch phases.</p>
+      <div class="tags"><span class="tag">Dashboard</span><span class="tag">Planning</span><span class="tag">OS</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>DASHBOARD</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
+
+    <!-- Private area teaser (Question #5: keep or remove?) -->
+    <div class="card private reveal" style="transition-delay:.36s">
+      <div class="card-top">
+        <div class="icon-tile" style="--g1:#6b7280;--g2:#374151;box-shadow:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 14.5v2.5"/></svg>
+        </div>
+        <span class="card-num">05</span>
+      </div>
+      <h3>Private Lab</h3>
+      <p class="desc">Experiments and private builds that will live behind authentication. This door is still under construction.</p>
+      <div class="tags"><span class="tag">Auth</span><span class="tag">Members only</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot amber"></span>COMING SOON</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="section" id="about">
+  <div class="section-head reveal">
+    <span class="kicker">02 / About</span>
+    <h2>One person, one index,<br>lots of small software.</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <!-- TODO: replace with your real bio (Question #4 in the comments at the top) -->
+      <p>I'm a builder who loves turning ideas into <strong>small, sharp tools</strong>. Most projects here start
+      as a conversation with an AI and end as a self-contained web app — no backend, no bloat, just something
+      useful you can open in a browser.</p>
+      <p>This site is my <strong>public index</strong>: everything listed is live and free to explore. Private
+      experiments will sit behind authentication once that door is ready.</p>
+      <p>When I'm not shipping, I'm probably riding — two wheels, open road, full throttle. If a tool here saves
+      you time — or sparks an idea — that's exactly the point.</p>
+      <div class="about-sign">— Mihai</div>
+    </div>
+    <div class="facts reveal" style="transition-delay:.12s">
+      <div class="fact"><span class="k">Location</span><span class="v">Romania 🇷🇴</span></div>
+      <div class="fact"><span class="k">Focus</span><span class="v">Micro-SaaS · Agentic AI</span></div>
+      <div class="fact"><span class="k">Method</span><span class="v">AI-assisted building</span></div>
+      <div class="fact"><span class="k">Off-keyboard</span><span class="v">Motorcycles 🏍️</span></div>
+      <div class="fact"><span class="k">Hosting</span><span class="v">GitHub Pages</span></div>
+      <div class="fact"><span class="k">Status</span><span class="v" style="color:var(--mint)">Shipping regularly</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ══ FOOTER / CONTACT (fixed functionality) ══ -->
+<footer id="contact">
+  <div class="footer-cta">
+    <span class="kicker reveal" style="justify-content:center">03 / Contact</span>
+    <h2 class="reveal grad-text" style="margin-top:16px">Have an idea worth shipping?</h2>
+    <p class="reveal" style="transition-delay:.1s">Most of my favourite projects started as a single prompt or a
+      quick conversation. Write a line below — it opens pre-addressed in your email app, or copy the address
+      and use your own.</p>
+
+    <!-- FIXED: working contact panel — mailto compose + copy-to-clipboard,
+         optional real-delivery endpoint via FORM_ENDPOINT in the script -->
+    <form class="contact-panel reveal" style="transition-delay:.18s" id="contactForm" novalidate>
+      <div class="field">
+        <label for="contactName">Your name</label>
+        <input id="contactName" name="name" type="text" placeholder="Jane Rider" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="contactMessage">Message</label>
+        <textarea id="contactMessage" name="message" rows="4" placeholder="I'd love a dashboard that…" required></textarea>
+      </div>
+      <div class="contact-actions">
+        <button class="btn btn-primary" type="submit" id="sendBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-11 11"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>
+          Send email
+        </button>
+        <button class="btn btn-ghost btn-copy" type="button" id="copyEmailBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A2.5 2.5 0 0 1 2 12.5v-8A2.5 2.5 0 0 1 4.5 2h8A2.5 2.5 0 0 1 15 4.5V5"/></svg>
+          <span id="copyLabel">Copy email</span>
+        </button>
+      </div>
+      <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      <p class="contact-email-line">or write directly:
+        <a data-mailto href="mailto:hello@mihaitinca.com">hello@mihaitinca.com</a>
+      </p>
+    </form>
+
+    <div class="socials reveal" style="transition-delay:.26s">
+      <a class="social" data-github href="https://github.com/melcoo" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.18-1.49 3.14-1.18 3.14-1.18.63 1.59.23 2.76.12 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.7 5.38-5.27 5.66.41.36.78 1.06.78 2.14 0 1.54-.01 2.79-.01 3.17 0 .31.2.67.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+      </a>
+      <a class="social" data-mailto href="mailto:hello@mihaitinca.com" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg>
+      </a>
+      <!-- TODO: uncomment & fill in when you confirm social links
+      <a class="social" href="https://linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+      </a>
+      -->
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© <span id="year">2025</span> Mihai Tinca · Built with AI, hosted on GitHub Pages</span>
+    <a href="#home">↑ Back to top</a>
+  </div>
+</footer>
+
+<script>
+/* ══ CONFIG — edit these two lines and every link updates ══ */
+const SITE_CONFIG = {
+  email:  'hello@mihaitinca.com',        /* ← put your REAL email here */
+  github: 'https://github.com/melcoo',
+  site:   'mihaitinca.com'
+};
+/* Optional real inbox delivery (Formspree / Web3Forms / Basin…).
+   Leave '' to keep the 100%-static mailto mode. Example:
+   'https://formspree.io/f/xyzabc' or 'https://api.web3forms.com/submit' */
+const FORM_ENDPOINT = '';
+
+const ROTATOR_WORDS = ['world-clock','srl-launchpad-2026','micro-saas-research','ai-invoice-os','something new…'];
+const PROJECT_COUNT = 4; /* TODO: keep in sync if you add/remove public projects */
+
+/* ── Wire every mailto / github link from config ── */
+const mailSubject = encodeURIComponent('Hello from ' + SITE_CONFIG.site);
+document.querySelectorAll('a[data-mailto]').forEach((link) => {
+  link.href = 'mailto:' + SITE_CONFIG.email + '?subject=' + mailSubject;
+  if (!link.textContent.trim() || link.textContent.includes('@')) {
+    /* keep icon-only socials as-is; text links show the address */
+    if (link.textContent.includes('@')) link.textContent = SITE_CONFIG.email;
+  }
+});
+document.querySelectorAll('a[data-github]').forEach((link) => { link.href = SITE_CONFIG.github; });
+
+/* ── Theme toggle (LIGHT is default) ─────── */
+const themeToggle = document.getElementById('themeToggle');
+const rootEl = document.documentElement;
+const themeMeta = document.querySelector('meta[name="color-scheme"]');
+
+function applyTheme(themeName){
+  rootEl.setAttribute('data-theme', themeName);
+  if (themeMeta) themeMeta.setAttribute('content', themeName);
+  themeToggle.setAttribute('aria-label',
+    themeName === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+}
+applyTheme(rootEl.getAttribute('data-theme') || 'light');
+
+themeToggle.addEventListener('click', () => {
+  const nextTheme = rootEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  applyTheme(nextTheme);
+  try { localStorage.setItem('mt-theme', nextTheme); } catch(err){ /* private mode */ }
+});
+
+/* ── "Get in touch": scroll + focus the form ── */
+const contactNameInput = document.getElementById('contactName');
+document.getElementById('getInTouch').addEventListener('click', () => {
+  setTimeout(() => { contactNameInput.focus({preventScroll:true}); }, 650);
+});
+
+/* ── Contact form: mailto compose OR endpoint POST ── */
+const contactForm  = document.getElementById('contactForm');
+const contactMsg   = document.getElementById('contactMessage');
+const formStatus   = document.getElementById('formStatus');
+
+function setStatus(message, isError){
+  formStatus.textContent = message;
+  formStatus.classList.toggle('err', !!isError);
+}
+
+contactForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const name    = contactNameInput.value.trim();
+  const message = contactMsg.value.trim();
+  if (!name || !message){
+    setStatus('Please fill in both fields before sending.', true);
+    (!name ? contactNameInput : contactMsg).focus();
+    return;
+  }
+
+  if (FORM_ENDPOINT){
+    /* real delivery mode (needs a free Formspree/Web3Forms endpoint) */
+    setStatus('Sending…', false);
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Accept':'application/json'},
+      body: JSON.stringify({name: name, message: message, _subject: 'Message from ' + name + ' via ' + SITE_CONFIG.site})
+    })
+    .then((response) => {
+      if (response.ok){
+        setStatus('Message sent ✓ — I\'ll reply soon.', false);
+        contactForm.reset();
+      } else {
+        throw new Error('bad response');
+      }
+    })
+    .catch(() => setStatus('Sending failed — please use the copy/email buttons below.', true));
+    return;
+  }
+
+  /* static mode: open the visitor's mail app, pre-filled */
+  const subject = encodeURIComponent('Project idea from ' + name + ' via ' + SITE_CONFIG.site);
+  const body    = encodeURIComponent(message + '\n\n— ' + name);
+  window.location.href = 'mailto:' + SITE_CONFIG.email + '?subject=' + subject + '&body=' + body;
+  setStatus('Opening your email app with the message pre-filled…', false);
+});
+
+/* ── Copy email button with fallbacks + feedback ── */
+const copyEmailBtn = document.getElementById('copyEmailBtn');
+const copyLabel    = document.getElementById('copyLabel');
+let copyResetTimer = null;
+
+function showCopied(){
+  copyEmailBtn.classList.add('copied');
+  copyLabel.textContent = 'Copied ✓';
+  setStatus('Email address copied to clipboard.', false);
+  clearTimeout(copyResetTimer);
+  copyResetTimer = setTimeout(() => {
+    copyEmailBtn.classList.remove('copied');
+    copyLabel.textContent = 'Copy email';
+  }, 2000);
+}
+
+copyEmailBtn.addEventListener('click', () => {
+  const email = SITE_CONFIG.email;
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(email).then(showCopied).catch(() => legacyCopy(email));
+  } else {
+    legacyCopy(email);
+  }
+});
+
+function legacyCopy(text){
+  const tempArea = document.createElement('textarea');
+  tempArea.value = text;
+  tempArea.setAttribute('readonly', '');
+  tempArea.style.position = 'fixed';
+  tempArea.style.opacity = '0';
+  document.body.appendChild(tempArea);
+  tempArea.select();
+  let copiedOk = false;
+  try { copiedOk = document.execCommand('copy'); } catch(err){ copiedOk = false; }
+  document.body.removeChild(tempArea);
+  if (copiedOKSafe(copiedOk)) { showCopied(); }
+  else { window.prompt('Copy the address manually:', text); }
+}
+function copiedOKSafe(flag){ return flag === true; }
+
+/* ── Nav scrolled state ──────────────────── */
+const mainNav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  mainNav.classList.toggle('scrolled', window.scrollY > 24);
+}, {passive:true});
+
+/* ── Scroll reveal ───────────────────────── */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
     }
-    const saved = localStorage.getItem('mti-theme');
-    apply(saved === 'dark' ? 'dark' : 'light');
-    btn.addEventListener('click', () => {
-      const cur = root.getAttribute('data-theme') || 'light';
-      apply(cur === 'dark' ? 'light' : 'dark');
-    });
-  </script>
+  });
+}, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+/* ── Card cursor spotlight ───────────────── */
+document.querySelectorAll('.card').forEach((card) => {
+  card.addEventListener('pointermove', (ev) => {
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mx', (ev.clientX - rect.left) + 'px');
+    card.style.setProperty('--my', (ev.clientY - rect.top) + 'px');
+  });
+});
+
+/* ── Live Bucharest clock ────────────────── */
+const heroClock = document.getElementById('heroClock');
+function tickClock(){
+  const timeStr = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Bucharest',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  }).format(new Date());
+  heroClock.innerHTML = timeStr.split(':').join('<span class="colon">:</span>');
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+/* ── Terminal word rotator ───────────────── */
+const rotatorWord = document.getElementById('rotatorWord');
+let rotatorIndex = 0;
+setInterval(() => {
+  rotatorWord.classList.add('out');
+  setTimeout(() => {
+    rotatorIndex = (rotatorIndex + 1) % ROTATOR_WORDS.length;
+    rotatorWord.textContent = ROTATOR_WORDS[rotatorIndex];
+    rotatorWord.classList.remove('out');
+  }, 320);
+}, 2600);
+
+/* ── Misc ────────────────────────────────── */
+document.getElementById('projectCount').textContent = PROJECT_COUNT;
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
