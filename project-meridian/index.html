@@ -1,0 +1,3416 @@
+<!doctype html>
+<!--
+  PROJECT MERIDIAN — STANDALONE PRESENTATION
+  Presentation recommendations:
+  1. Narrative arc: emotional problem → Sanctuary philosophy → system architecture → daily ritual → psychology → incubation → feedback → security → comparison → CTA.
+  2. Keep the visual tone warm, calm, grounded, and unhurried. No aggressive urgency banners or shame-based streak language.
+  3. Use interactive demos instead of static feature lists: the 9-altitude cascade, Pocket Mode ritual, Approach-Goal Guard reframer, and 7-day incubator timeline.
+  4. For deployment, replace /login with the actual Meridian entry route. If self-hosting is preferred, download the Fontsource packages rather than loading the CDN.
+  5. Maintain accessibility: semantic landmarks, 44px targets, visible focus, aria-live for the reframer, reduced-motion support, and responsive stacked tables.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Project Meridian — The Intentional Life Operating System</title>
+  <meta name="description" content="Project Meridian connects your ten-year horizon to one meaningful daily action through a 9-altitude discovery cascade, Pocket Mode, approach-goal reframing, idea incubation, adaptive feedback, and sovereign security.">
+  <meta property="og:title" content="Project Meridian — The Intentional Life Operating System">
+  <meta property="og:description" content="Stop managing tasks. Start orienting a life.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%23171412'/><circle cx='50' cy='50' r='28' fill='none' stroke='%232f5d4a' stroke-width='6'/><circle cx='50' cy='50' r='10' fill='%23c99a4e'/></svg>">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@latest/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@latest/index.css">
+
+  <style>
+    :root {
+      --canvas: #faf7f2;
+      --surface: #fffdf9;
+      --surface-2: #f4eee6;
+      --night: #171412;
+      --night-2: #201c18;
+      --night-3: #13100e;
+      --cream: #f5efe6;
+      --ink: #241f1a;
+      --muted: #5d5449;
+      --muted-dark: #b8ab9c;
+      --line: #e6ddd0;
+      --line-dark: rgba(245, 239, 230, 0.12);
+      --sage: #2f5d4a;
+      --sage-hover: #274d3e;
+      --sage-light: #8fb9a4;
+      --sage-soft: #e7efe9;
+      --clay: #b46a45;
+      --clay-dark: #8a4a29;
+      --clay-light: #d89a76;
+      --clay-soft: #f6e7dc;
+      --gold: #c99a4e;
+      --gold-soft: #f3e6cf;
+      --danger: #9e3a38;
+      --radius-sm: 14px;
+      --radius: 22px;
+      --radius-lg: 32px;
+      --shadow-sm: 0 1px 2px rgba(36, 31, 26, 0.04), 0 10px 28px rgba(36, 31, 26, 0.05);
+      --shadow-lg: 0 24px 80px rgba(36, 31, 26, 0.12);
+      --font-body: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-display: 'Fraunces Variable', Fraunces, 'Iowan Old Style', Georgia, serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 96px;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: var(--canvas);
+      color: var(--ink);
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-display);
+      font-weight: 620;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      margin: 0;
+      text-wrap: balance;
+    }
+
+    p {
+      margin: 0;
+      text-wrap: pretty;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    img,
+    svg {
+      max-width: 100%;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--sage);
+      outline-offset: 3px;
+      border-radius: 8px;
+    }
+
+    .section-dark :focus-visible,
+    .hero :focus-visible {
+      outline-color: var(--gold);
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      z-index: 400;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      background: var(--sage);
+      color: #fff;
+      font-weight: 600;
+      transition: top 0.2s ease;
+    }
+
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 3rem));
+      margin-inline: auto;
+    }
+
+    .section {
+      padding: clamp(4.5rem, 9vw, 8.5rem) 0;
+      scroll-margin-top: 88px;
+    }
+
+    .section-dark {
+      background:
+        radial-gradient(circle at 85% 10%, rgba(47, 93, 74, 0.22), transparent 32%),
+        radial-gradient(circle at 10% 90%, rgba(180, 106, 69, 0.16), transparent 30%),
+        var(--night);
+      color: var(--cream);
+    }
+
+    .section-surface {
+      background: var(--surface);
+    }
+
+    .section-warm {
+      background: linear-gradient(180deg, var(--surface) 0%, #f6efe5 100%);
+    }
+
+    .section-head {
+      max-width: 860px;
+      margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 36px;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      background: var(--sage-soft);
+      color: var(--sage);
+      border: 1px solid rgba(47, 93, 74, 0.12);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-dark .eyebrow,
+    .hero .eyebrow {
+      background: rgba(143, 185, 164, 0.12);
+      border-color: rgba(143, 185, 164, 0.18);
+      color: var(--sage-light);
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 4px rgba(201, 154, 78, 0.16);
+    }
+
+    .h1 {
+      font-size: clamp(2.9rem, 7vw, 5.4rem);
+      max-width: 12ch;
+    }
+
+    .h2 {
+      font-size: clamp(2.1rem, 4.8vw, 3.4rem);
+      max-width: 18ch;
+    }
+
+    .h3 {
+      font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+    }
+
+    .lead {
+      margin-top: 1.25rem;
+      font-size: clamp(1.06rem, 1.7vw, 1.25rem);
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 72ch;
+    }
+
+    .section-dark .lead {
+      color: var(--muted-dark);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .dark-muted {
+      color: var(--muted-dark);
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(47, 93, 74, 0.18);
+    }
+
+    .section-dark .card,
+    .dark-card {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--line-dark);
+      box-shadow: none;
+    }
+
+    .section-dark .card:hover,
+    .dark-card:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(201, 154, 78, 0.24);
+    }
+
+    .card h3,
+    .card h4 {
+      margin-bottom: 0.65rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .section-dark .card p {
+      color: var(--muted-dark);
+    }
+
+    .icon-wrap {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 1.15rem;
+      background: var(--sage-soft);
+      color: var(--sage);
+      border: 1px solid rgba(47, 93, 74, 0.1);
+    }
+
+    .icon-wrap svg {
+      width: 25px;
+      height: 25px;
+    }
+
+    .icon-clay { background: var(--clay-soft); color: var(--clay-dark); border-color: rgba(180, 106, 69, 0.12); }
+    .icon-gold { background: var(--gold-soft); color: #7d5a17; border-color: rgba(201, 154, 78, 0.14); }
+
+    .section-dark .icon-wrap {
+      background: rgba(143, 185, 164, 0.12);
+      border-color: rgba(143, 185, 164, 0.16);
+      color: var(--sage-light);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      min-height: 48px;
+      padding: 0.85rem 1.45rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 650;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      text-align: center;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--sage) 0%, #3d7259 52%, var(--gold) 140%);
+      color: #fff;
+      box-shadow: 0 12px 34px rgba(47, 93, 74, 0.22);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 16px 42px rgba(47, 93, 74, 0.28);
+    }
+
+    .btn-outline {
+      background: var(--surface);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    .btn-outline:hover {
+      border-color: rgba(47, 93, 74, 0.28);
+      background: var(--sage-soft);
+    }
+
+    .btn-ghost-dark {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(245, 239, 230, 0.16);
+      color: var(--cream);
+    }
+
+    .btn-ghost-dark:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(201, 154, 78, 0.35);
+    }
+
+    .btn-sm {
+      min-height: 44px;
+      padding: 0.6rem 1rem;
+      font-size: 0.9375rem;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    .progress-track {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 3px;
+      z-index: 300;
+      background: transparent;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--sage-light), var(--gold), var(--clay-light));
+    }
+
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 200;
+      background: rgba(19, 16, 14, 0.74);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(245, 239, 230, 0.08);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .site-header.scrolled {
+      background: rgba(19, 16, 14, 0.92);
+      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    .nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--cream);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      min-height: 44px;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--sage), var(--gold));
+      display: grid;
+      place-items: center;
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 10px 24px rgba(47, 93, 74, 0.22);
+      flex: none;
+    }
+
+    .brand-mark::after {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .brand-text {
+      display: grid;
+      line-height: 1.1;
+    }
+
+    .brand-text small {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245, 239, 230, 0.62);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.15rem;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      color: rgba(245, 239, 230, 0.76);
+      font-size: 0.9375rem;
+      font-weight: 550;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--cream);
+      background: rgba(245, 239, 230, 0.09);
+    }
+
+    .nav-links .nav-cta a {
+      margin-left: 0.4rem;
+      background: linear-gradient(135deg, var(--sage), #40755c);
+      color: #fff;
+      box-shadow: 0 8px 22px rgba(47, 93, 74, 0.2);
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(245, 239, 230, 0.18);
+      background: rgba(245, 239, 230, 0.06);
+      color: var(--cream);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      color: var(--cream);
+      padding: calc(72px + clamp(3.5rem, 8vw, 6.5rem)) 0 clamp(3rem, 6vw, 5rem);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(47, 93, 74, 0.42), transparent 38%),
+        radial-gradient(circle at 86% 14%, rgba(180, 106, 69, 0.28), transparent 34%),
+        radial-gradient(circle at 55% 100%, rgba(201, 154, 78, 0.16), transparent 42%),
+        linear-gradient(180deg, #171412 0%, #1e1916 58%, #171412 100%);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(245, 239, 230, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 239, 230, 0.035) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at center, rgba(0,0,0,0.75), transparent 78%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.28;
+      pointer-events: none;
+      animation: float 18s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 320px;
+      height: 320px;
+      background: rgba(143, 185, 164, 0.5);
+      top: -80px;
+      right: 10%;
+    }
+
+    .orb-2 {
+      width: 280px;
+      height: 280px;
+      background: rgba(201, 154, 78, 0.36);
+      bottom: -100px;
+      left: -60px;
+      animation-delay: -6s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(18px, -24px, 0) scale(1.06); }
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.03fr 0.97fr;
+      gap: clamp(2rem, 5vw, 4rem);
+      align-items: center;
+    }
+
+    .hero h1 {
+      color: var(--cream);
+    }
+
+    .hero .lead {
+      color: rgba(245, 239, 230, 0.82);
+      max-width: 62ch;
+    }
+
+    .quote-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-top: 1.75rem;
+      padding: 0.95rem 1.15rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line-dark);
+      color: rgba(245, 239, 230, 0.86);
+      max-width: 560px;
+    }
+
+    .quote-chip strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      line-height: 1.35;
+      color: var(--cream);
+    }
+
+    .quote-chip span {
+      display: block;
+      margin-top: 0.2rem;
+      font-size: 0.875rem;
+      color: rgba(245, 239, 230, 0.62);
+    }
+
+    .quote-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(201, 154, 78, 0.16);
+      color: var(--gold);
+      flex: none;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+    }
+
+    .funnel {
+      position: relative;
+      display: grid;
+      gap: 0.55rem;
+      padding: 1.45rem;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(245, 239, 230, 0.12);
+      box-shadow: 0 36px 100px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .funnel-thread {
+      position: absolute;
+      left: 50%;
+      top: 1.6rem;
+      bottom: 1.6rem;
+      width: 2px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, transparent, var(--gold), var(--sage-light), transparent);
+      opacity: 0.45;
+      z-index: 0;
+    }
+
+    .alt-row {
+      position: relative;
+      z-index: 1;
+      width: var(--w, 100%);
+      margin-inline: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 16px;
+      background: rgba(23, 20, 18, 0.66);
+      border: 1px solid rgba(245, 239, 230, 0.08);
+      color: rgba(245, 239, 230, 0.76);
+      font-size: 0.9rem;
+      transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .alt-row:hover {
+      transform: translateY(-2px);
+      color: var(--cream);
+      border-color: rgba(201, 154, 78, 0.22);
+    }
+
+    .alt-row strong {
+      color: var(--cream);
+      font-weight: 650;
+    }
+
+    .alt-row small {
+      color: rgba(201, 154, 78, 0.82);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .alt-row.today {
+      background: linear-gradient(135deg, rgba(47, 93, 74, 0.92), rgba(201, 154, 78, 0.34));
+      border-color: rgba(201, 154, 78, 0.42);
+      color: #fff;
+      box-shadow: 0 14px 40px rgba(47, 93, 74, 0.28);
+    }
+
+    .alt-row.today strong,
+    .alt-row.today small {
+      color: #fff;
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .stat {
+      padding: 1.15rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid var(--line-dark);
+    }
+
+    .stat-number {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+
+    .stat span:last-child {
+      color: rgba(245, 239, 230, 0.72);
+      font-size: 0.9375rem;
+    }
+
+    .flow-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2.5rem;
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .flow-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .flow-arrow {
+      color: var(--clay);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .quote-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(2rem, 5vw, 4rem);
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(47, 93, 74, 0.28), transparent 34%),
+        radial-gradient(circle at 85% 80%, rgba(180, 106, 69, 0.18), transparent 32%),
+        rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--line-dark);
+    }
+
+    .big-quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 4.4vw, 3.2rem);
+      line-height: 1.18;
+      color: var(--cream);
+      max-width: 24ch;
+    }
+
+    .cascade-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .tablist {
+      display: flex;
+      gap: 0.55rem;
+    }
+
+    .tablist-vertical {
+      flex-direction: column;
+    }
+
+    .tab {
+      width: 100%;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .tab:hover {
+      transform: translateX(2px);
+      border-color: rgba(47, 93, 74, 0.22);
+      background: var(--sage-soft);
+    }
+
+    .tab[aria-selected="true"] {
+      background: linear-gradient(135deg, var(--sage), #3d7259);
+      border-color: var(--sage);
+      color: #fff;
+      box-shadow: 0 16px 42px rgba(47, 93, 74, 0.2);
+    }
+
+    .tab-index {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-2);
+      color: var(--sage);
+      font-size: 0.8125rem;
+      font-weight: 800;
+      flex: none;
+    }
+
+    .tab[aria-selected="true"] .tab-index {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+
+    .tab-text {
+      min-width: 0;
+      display: grid;
+      gap: 0.05rem;
+    }
+
+    .tab-text strong {
+      font-size: 0.98rem;
+      line-height: 1.25;
+    }
+
+    .tab-text small {
+      color: var(--muted);
+      font-size: 0.8125rem;
+      line-height: 1.3;
+    }
+
+    .tab[aria-selected="true"] .tab-text small {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      box-shadow: var(--shadow-sm);
+      animation: panelIn 0.35s ease;
+    }
+
+    .panel[hidden] {
+      display: none;
+    }
+
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .panel-top {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--sage-soft), var(--gold-soft));
+      color: var(--sage);
+      border: 1px solid rgba(47, 93, 74, 0.12);
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      flex: none;
+    }
+
+    .panel-time {
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+
+    .panel-question {
+      padding: 1.15rem 1.25rem;
+      border-radius: 20px;
+      background: var(--canvas);
+      border: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-size: clamp(1.15rem, 2vw, 1.45rem);
+      line-height: 1.4;
+      color: var(--ink);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .meta-card {
+      padding: 1.15rem;
+      border-radius: 20px;
+      background: var(--surface-2);
+      border: 1px solid rgba(230, 221, 208, 0.85);
+    }
+
+    .meta-label {
+      display: block;
+      margin-bottom: 0.45rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+
+    .why-note {
+      margin-top: 1.25rem;
+      padding-left: 1.15rem;
+      border-left: 3px solid var(--gold);
+      color: var(--muted);
+    }
+
+    .pocket-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: clamp(2rem, 5vw, 4rem);
+      align-items: center;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1.75rem;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255, 253, 249, 0.7);
+      border: 1px solid rgba(230, 221, 208, 0.8);
+    }
+
+    .feature-check {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--sage-soft);
+      color: var(--sage);
+      flex: none;
+      margin-top: 0.1rem;
+    }
+
+    .phone {
+      position: relative;
+      width: min(360px, 100%);
+      height: 720px;
+      padding: 0.8rem;
+      margin-inline: auto;
+      border-radius: 48px;
+      background: linear-gradient(180deg, #2b241d, #171412);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 40px 100px rgba(36, 31, 26, 0.26);
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 96px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      z-index: 2;
+    }
+
+    .phone-screen {
+      height: 100%;
+      overflow-y: auto;
+      border-radius: 38px;
+      background: linear-gradient(180deg, #fffdf9, #f4ede2);
+      color: var(--ink);
+      padding: 2.35rem 1.15rem 1.25rem;
+      display: grid;
+      gap: 0.9rem;
+      align-content: start;
+      scrollbar-width: thin;
+    }
+
+    .screen-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .screen-label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .screen-progress {
+      min-width: 56px;
+      min-height: 36px;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: var(--sage-soft);
+      color: var(--sage);
+      border: 1px solid rgba(47, 93, 74, 0.12);
+      font-size: 0.875rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .screen-card {
+      padding: 1rem;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 26px rgba(36, 31, 26, 0.05);
+    }
+
+    .screen-card.objective {
+      background: linear-gradient(135deg, rgba(231, 239, 233, 0.95), rgba(255, 255, 255, 0.95));
+      border-color: rgba(47, 93, 74, 0.14);
+    }
+
+    .screen-card.golden {
+      background: linear-gradient(135deg, rgba(243, 230, 207, 0.95), rgba(255, 255, 255, 0.96));
+      border-color: rgba(201, 154, 78, 0.2);
+    }
+
+    .screen-card p {
+      font-size: 0.98rem;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .habit-list {
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+
+    .habit-toggle {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .habit-toggle:hover {
+      transform: translateY(-1px);
+      border-color: rgba(47, 93, 74, 0.2);
+    }
+
+    .habit-toggle[aria-pressed="true"] {
+      background: var(--sage-soft);
+      border-color: rgba(47, 93, 74, 0.24);
+    }
+
+    .check {
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid var(--line);
+      background: var(--canvas);
+      color: transparent;
+      flex: none;
+      transition: all 0.2s ease;
+    }
+
+    .habit-toggle[aria-pressed="true"] .check {
+      background: var(--sage);
+      border-color: var(--sage);
+      color: #fff;
+    }
+
+    .screen-note {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: rgba(47, 93, 74, 0.08);
+      border: 1px dashed rgba(47, 93, 74, 0.18);
+      color: var(--sage);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .guard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .demo-card {
+      padding: clamp(1.5rem, 3vw, 2rem);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .text-input {
+      flex: 1;
+      min-width: 0;
+      min-height: 52px;
+      padding: 0.9rem 1rem;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--canvas);
+      font-size: 1rem;
+    }
+
+    .text-input:focus-visible {
+      border-color: var(--sage);
+      outline: 2px solid var(--sage);
+      outline-offset: 2px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .chip {
+      min-height: 44px;
+      padding: 0.6rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--canvas);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover,
+    .chip.active {
+      background: var(--clay-soft);
+      border-color: rgba(180, 106, 69, 0.2);
+      color: var(--clay-dark);
+    }
+
+    .output-card {
+      margin-top: 1.5rem;
+      padding: 1.35rem;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--sage-soft), #fffdf9 70%);
+      border: 1px solid rgba(47, 93, 74, 0.14);
+    }
+
+    .output-label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--sage);
+    }
+
+    .output-strong {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+      line-height: 1.35;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .output-sub {
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .before-after {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .avoid-card,
+    .approach-card {
+      padding: 1.15rem;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+    }
+
+    .avoid-card {
+      background: #f8efeb;
+      border-color: rgba(180, 106, 69, 0.16);
+    }
+
+    .approach-card {
+      background: var(--sage-soft);
+      border-color: rgba(47, 93, 74, 0.14);
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: rgba(245, 239, 230, 0.14);
+      z-index: 0;
+    }
+
+    .day-tab {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      color: var(--muted-dark);
+    }
+
+    .day-dot {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--night-2);
+      border: 2px solid rgba(245, 239, 230, 0.14);
+      color: var(--cream);
+      font-weight: 800;
+      transition: all 0.25s ease;
+    }
+
+    .day-tab[aria-selected="true"] .day-dot {
+      background: linear-gradient(135deg, var(--sage), var(--gold));
+      border-color: rgba(201, 154, 78, 0.5);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(47, 93, 74, 0.28);
+      transform: scale(1.06);
+    }
+
+    .day-label {
+      font-size: 0.8125rem;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    .day-tab[aria-selected="true"] .day-label {
+      color: var(--cream);
+    }
+
+    .dark-panel {
+      padding: clamp(1.5rem, 3vw, 2.25rem);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid var(--line-dark);
+      animation: panelIn 0.35s ease;
+    }
+
+    .dark-panel[hidden] {
+      display: none;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .question-list li {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(245, 239, 230, 0.08);
+      color: rgba(245, 239, 230, 0.82);
+    }
+
+    .question-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(201, 154, 78, 0.16);
+      color: var(--gold);
+      font-size: 0.8125rem;
+      font-weight: 800;
+      flex: none;
+    }
+
+    .verdict-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .verdict-card {
+      padding: 1.35rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line-dark);
+    }
+
+    .verdict-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8125rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.85rem;
+    }
+
+    .badge-sage { background: rgba(143, 185, 164, 0.14); color: var(--sage-light); }
+    .badge-gold { background: rgba(201, 154, 78, 0.16); color: var(--gold); }
+    .badge-clay { background: rgba(216, 154, 118, 0.15); color: var(--clay-light); }
+
+    .pill-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pill-tab {
+      min-height: 48px;
+      padding: 0.75rem 1.15rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill-tab:hover {
+      border-color: rgba(47, 93, 74, 0.22);
+      color: var(--ink);
+    }
+
+    .pill-tab[aria-selected="true"] {
+      background: var(--sage);
+      border-color: var(--sage);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(47, 93, 74, 0.18);
+    }
+
+    .metric {
+      padding: 1.1rem 1.2rem;
+      border-radius: 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      margin-bottom: 0.9rem;
+    }
+
+    .metric-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .metric-top strong {
+      font-size: 1rem;
+    }
+
+    .metric-value {
+      font-weight: 800;
+      color: var(--sage);
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--sage), var(--gold));
+      transition: width 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .security-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+
+    .flow-card {
+      position: relative;
+      padding: 1.4rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line-dark);
+    }
+
+    .flow-step {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(201, 154, 78, 0.15);
+      color: var(--gold);
+      font-weight: 800;
+      margin-bottom: 0.9rem;
+    }
+
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .comparison {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison caption {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--muted);
+      background: var(--canvas);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .comparison th,
+    .comparison td {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .comparison thead th {
+      background: var(--sage);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .comparison tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .comparison td:first-child {
+      font-weight: 700;
+      width: 22%;
+      background: var(--canvas);
+    }
+
+    .meridian-col {
+      background: var(--sage-soft);
+      font-weight: 550;
+    }
+
+    .who-card {
+      min-height: 100%;
+    }
+
+    .faq {
+      display: grid;
+      gap: 0.75rem;
+      max-width: 900px;
+    }
+
+    .faq details {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--surface);
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .faq details[open] {
+      border-color: rgba(47, 93, 74, 0.2);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .faq summary {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      font-weight: 700;
+      list-style: none;
+    }
+
+    .faq summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-body {
+      padding: 0 1.25rem 1.25rem;
+      color: var(--muted);
+    }
+
+    .faq-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--canvas);
+      color: var(--sage);
+      flex: none;
+      transition: transform 0.25s ease;
+    }
+
+    .faq details[open] .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .cta-panel {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(2.5rem, 6vw, 5rem);
+      border-radius: 40px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(47, 93, 74, 0.34), transparent 32%),
+        radial-gradient(circle at 80% 80%, rgba(201, 154, 78, 0.2), transparent 30%),
+        rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--line-dark);
+    }
+
+    .cta-panel h2 {
+      color: var(--cream);
+      max-width: 18ch;
+      margin-inline: auto;
+    }
+
+    .cta-panel .lead {
+      margin-inline: auto;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      justify-content: center;
+      margin-top: 2.25rem;
+    }
+
+    .footer {
+      background: var(--night-3);
+      color: rgba(245, 239, 230, 0.7);
+      padding: 3rem 0;
+      border-top: 1px solid rgba(245, 239, 230, 0.08);
+    }
+
+    .footer-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      color: rgba(245, 239, 230, 0.72);
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--cream);
+      background: rgba(245, 239, 230, 0.07);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: opacity, transform;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
+
+    @media (max-width: 1080px) {
+      .nav-links a:not(.nav-cta-link) {
+        padding-inline: 0.55rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    @media (max-width: 1020px) {
+      .nav-toggle {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 72px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+        padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+        background: rgba(19, 16, 14, 0.98);
+        border-bottom: 1px solid rgba(245, 239, 230, 0.1);
+        transform: translateY(-120%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.28s ease, opacity 0.28s ease;
+        max-height: calc(100vh - 72px);
+        overflow-y: auto;
+      }
+
+      .nav-links.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .nav-links a {
+        width: 100%;
+        justify-content: flex-start;
+        border-radius: 16px;
+      }
+
+      .hero-grid,
+      .pocket-grid,
+      .guard-grid,
+      .cascade-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-visual {
+        order: 2;
+      }
+
+      .tablist-vertical {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0.65rem;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tablist-vertical .tab {
+        min-width: max-content;
+        scroll-snap-align: start;
+      }
+
+      .grid-4,
+      .security-flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3,
+      .meta-grid,
+      .verdict-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 780px) {
+      .container {
+        width: min(1180px, calc(100% - 2rem));
+      }
+
+      .comparison thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      .comparison,
+      .comparison tbody,
+      .comparison tr,
+      .comparison td {
+        display: block;
+        width: 100%;
+      }
+
+      .comparison caption {
+        border-radius: 0;
+      }
+
+      .comparison tr {
+        margin: 1rem;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--surface);
+      }
+
+      .comparison td {
+        border-bottom: 1px solid var(--line);
+        width: auto;
+      }
+
+      .comparison td:last-child {
+        border-bottom: 0;
+      }
+
+      .comparison td::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .comparison td:first-child {
+        background: var(--surface-2);
+        font-size: 1.05rem;
+      }
+
+      .before-after {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline {
+        grid-template-columns: repeat(5, minmax(56px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+      }
+
+      .timeline::before {
+        left: 28px;
+        right: 28px;
+      }
+
+      .day-label {
+        font-size: 0.7rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .h1 {
+        max-width: 16ch;
+      }
+
+      .hero-stats,
+      .grid-2,
+      .grid-4,
+      .security-flow {
+        grid-template-columns: 1fr;
+      }
+
+      .input-row {
+        flex-direction: column;
+      }
+
+      .alt-row {
+        width: 100% !important;
+        font-size: 0.84rem;
+        padding: 0.65rem 0.85rem;
+      }
+
+      .alt-row small {
+        display: none;
+      }
+
+      .phone {
+        height: 680px;
+        border-radius: 40px;
+      }
+
+      .phone-screen {
+        border-radius: 32px;
+      }
+
+      .flow-wrap {
+        padding: 1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+
+      .orb,
+      .card,
+      .btn,
+      .tab,
+      .panel,
+      .dark-panel,
+      .bar span {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header" id="siteHeader">
+    <nav class="nav container" aria-label="Primary">
+      <a class="brand" href="#top" aria-label="Project Meridian home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>Project Meridian</strong>
+          <small>Intentional Life OS</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#philosophy">Philosophy</a></li>
+        <li><a href="#cascade">Cascade</a></li>
+        <li><a href="#pocket">Pocket Mode</a></li>
+        <li><a href="#guard">Goal Guard</a></li>
+        <li><a href="#incubator">Incubator</a></li>
+        <li><a href="#loop">Feedback</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#compare">Compare</a></li>
+        <li class="nav-cta"><a class="nav-cta-link" href="#start">Begin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="overview" aria-labelledby="hero-title">
+      <div class="orb orb-1" aria-hidden="true"></div>
+      <div class="orb orb-2" aria-hidden="true"></div>
+
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-copy reveal">
+            <div class="eyebrow">
+              <span class="eyebrow-dot" aria-hidden="true"></span>
+              Mindful clarity &amp; execution
+            </div>
+
+            <h1 class="h1" id="hero-title">Your life is not a to-do list.</h1>
+
+            <p class="lead">
+              Project Meridian is an intentional life operating system. It connects your ten-year horizon to one
+              meaningful daily action through a nine-altitude discovery cascade, a calm morning ritual,
+              approach-goal psychology, idea incubation, adaptive feedback, and sovereign security.
+            </p>
+
+            <div class="quote-chip">
+              <span class="quote-mark" aria-hidden="true">”</span>
+              <div>
+                <strong>Nature does not hurry, yet everything is accomplished.</strong>
+                <span>Taoist pacing is the foundation of Meridian, not a decorative theme.</span>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <a class="btn btn-primary" href="#cascade">Explore the 9 altitudes</a>
+              <a class="btn btn-ghost-dark" href="#problem">Why to-do apps fail</a>
+            </div>
+          </div>
+
+          <div class="hero-visual reveal delay-2">
+            <div class="funnel" aria-hidden="true">
+              <div class="funnel-thread"></div>
+              <div class="alt-row" style="--w: 100%;"><span><strong>10-Year</strong> Horizon</span><small>Legacy</small></div>
+              <div class="alt-row" style="--w: 94%;"><span><strong>5-Year</strong> Milestones</span><small>Landmarks</small></div>
+              <div class="alt-row" style="--w: 88%;"><span><strong>3-Year</strong> Trajectory</span><small>Bridge</small></div>
+              <div class="alt-row" style="--w: 82%;"><span><strong>1-Year</strong> Objectives</span><small>Compass</small></div>
+              <div class="alt-row" style="--w: 76%;"><span><strong>90-Day</strong> Quarter</span><small>Season</small></div>
+              <div class="alt-row" style="--w: 70%;"><span><strong>Monthly</strong> Focus</span><small>Momentum</small></div>
+              <div class="alt-row" style="--w: 64%;"><span><strong>Weekly</strong> Rhythm</span><small>Review</small></div>
+              <div class="alt-row today" style="--w: 58%;"><span><strong>Daily</strong> Golden Thread</span><small>One action</small></div>
+              <div class="alt-row" style="--w: 52%;"><span><strong>Present</strong> Step</span><small>Now</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-stats reveal delay-3">
+          <div class="stat"><span class="stat-number">9</span><span>Discovery altitudes</span></div>
+          <div class="stat"><span class="stat-number">1</span><span>Daily Golden Thread</span></div>
+          <div class="stat"><span class="stat-number">7</span><span>Idea incubation days</span></div>
+          <div class="stat"><span class="stat-number">0</span><span>Guilt badges</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="problem" aria-labelledby="problem-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> The Core Problem</div>
+          <h2 class="h2" id="problem-title">Conventional productivity tools make you busier, not clearer.</h2>
+          <p class="lead">
+            Most apps assume the problem is forgetting tasks. The deeper problem is disorientation. When a task is not
+            connected to a chosen altitude, completion feels empty and non-completion feels like personal failure.
+          </p>
+        </div>
+
+        <div class="grid grid-4">
+          <article class="card reveal">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-6.22-8.56"></path>
+                <path d="M21 3v6h-6"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Guilt spirals</h3>
+            <p>A missed task becomes evidence that you are behind. Shame triggers avoidance, and avoidance grows the backlog.</p>
+          </article>
+
+          <article class="card reveal delay-1">
+            <div class="icon-wrap icon-clay">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2 2 7l10 5 10-5-10-5Z"></path>
+                <path d="m2 12 10 5 10-5"></path>
+                <path d="m2 17 10 5 10-5"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Overwhelming backlogs</h3>
+            <p>Infinite capture rewards accumulation. The list becomes a museum of obligations instead of a compass for meaningful action.</p>
+          </article>
+
+          <article class="card reveal delay-2">
+            <div class="icon-wrap icon-gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                <path d="M12 8v4"></path>
+                <path d="M12 16h.01"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Avoidance framing</h3>
+            <p>“Don’t eat junk,” “stop procrastinating,” and “quit scrolling” keep attention fixed on the unwanted behavior instead of a chosen destination.</p>
+          </article>
+
+          <article class="card reveal delay-3">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+            </div>
+            <h3 class="h3">Missing altitude</h3>
+            <p>Daily tasks float free of one-year objectives and ten-year meaning, so urgency masquerades as importance.</p>
+          </article>
+        </div>
+
+        <div class="flow-wrap reveal" aria-label="Conventional guilt spiral">
+          <span class="flow-pill">Infinite backlog</span>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-pill">Missed task</span>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-pill">Shame</span>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-pill">Avoidance</span>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <span class="flow-pill">Larger backlog</span>
+          <span class="flow-arrow" aria-hidden="true">↺</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="philosophy" aria-labelledby="philosophy-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Sanctuary Philosophy</div>
+          <h2 class="h2" id="philosophy-title">Calm is not cosmetic. It is the operating system.</h2>
+          <p class="lead">
+            Meridian is designed like a sanctuary: warm, grounded, unhurried, and precise. It does not shout at you.
+            It orients you.
+          </p>
+        </div>
+
+        <div class="quote-panel reveal">
+          <p class="big-quote">“Nature does not hurry, yet everything is accomplished.”</p>
+          <p class="lead" style="margin-top: 1.25rem;">
+            Lao Tzu’s insight becomes a product rule: reduce friction, protect attention, honor seasons, and let action
+            emerge from clarity rather than panic.
+          </p>
+        </div>
+
+        <div class="grid grid-4" style="margin-top: 1.5rem;">
+          <article class="card reveal">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Calm by default</h3>
+            <p>No red badges of shame, no infinite scroll, no urgency theater. The interface lowers nervous-system noise.</p>
+          </article>
+
+          <article class="card reveal delay-1">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Warm by design</h3>
+            <p>Supportive copy, humane recovery, and gentle visual warmth replace punitive streak psychology.</p>
+          </article>
+
+          <article class="card reveal delay-2">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m8 3 4 8 5-5 5 14H2L8 3z"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Grounded by rhythm</h3>
+            <p>Weekly and quarterly review creates stability. Progress is measured against altitude, not noise.</p>
+          </article>
+
+          <article class="card reveal delay-3">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Z"></path>
+                <path d="M12 12c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z"></path>
+              </svg>
+            </div>
+            <h3 class="h3">Taoist pacing</h3>
+            <p>Effort follows season. Meridian prevents both stagnation and burnout by adapting the bar to your current capacity.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cascade" aria-labelledby="cascade-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> 9-Altitude Discovery Cascade</div>
+          <h2 class="h2" id="cascade-title">Reverse-engineer a meaningful life from horizon to hand.</h2>
+          <p class="lead">
+            Discovery begins at the ten-year horizon and descends through milestones, objectives, seasons, rhythms,
+            and finally one golden action today. Each altitude makes the next one obvious.
+          </p>
+        </div>
+
+        <div class="cascade-layout tab-system reveal" id="cascadeSystem">
+          <div class="tablist tablist-vertical" role="tablist" aria-label="Nine altitude discovery cascade" aria-orientation="vertical">
+            <button class="tab" id="cascade-tab-1" role="tab" aria-selected="true" aria-controls="cascade-panel-1" type="button">
+              <span class="tab-index">01</span>
+              <span class="tab-text"><strong>Ten-Year Horizon</strong><small>Legacy filter</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-2" role="tab" aria-selected="false" aria-controls="cascade-panel-2" type="button" tabindex="-1">
+              <span class="tab-index">02</span>
+              <span class="tab-text"><strong>Five-Year Milestones</strong><small>Landmarks</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-3" role="tab" aria-selected="false" aria-controls="cascade-panel-3" type="button" tabindex="-1">
+              <span class="tab-index">03</span>
+              <span class="tab-text"><strong>Three-Year Trajectory</strong><small>Bridge</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-4" role="tab" aria-selected="false" aria-controls="cascade-panel-4" type="button" tabindex="-1">
+              <span class="tab-index">04</span>
+              <span class="tab-text"><strong>One-Year Objectives</strong><small>Annual compass</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-5" role="tab" aria-selected="false" aria-controls="cascade-panel-5" type="button" tabindex="-1">
+              <span class="tab-index">05</span>
+              <span class="tab-text"><strong>Ninety-Day Quarter</strong><small>Season of focus</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-6" role="tab" aria-selected="false" aria-controls="cascade-panel-6" type="button" tabindex="-1">
+              <span class="tab-index">06</span>
+              <span class="tab-text"><strong>Monthly Focus</strong><small>Momentum</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-7" role="tab" aria-selected="false" aria-controls="cascade-panel-7" type="button" tabindex="-1">
+              <span class="tab-index">07</span>
+              <span class="tab-text"><strong>Weekly Rhythm</strong><small>Review loop</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-8" role="tab" aria-selected="false" aria-controls="cascade-panel-8" type="button" tabindex="-1">
+              <span class="tab-index">08</span>
+              <span class="tab-text"><strong>Daily Golden Thread</strong><small>One meaningful action</small></span>
+            </button>
+            <button class="tab" id="cascade-tab-9" role="tab" aria-selected="false" aria-controls="cascade-panel-9" type="button" tabindex="-1">
+              <span class="tab-index">09</span>
+              <span class="tab-text"><strong>Present Step</strong><small>Immediate start</small></span>
+            </button>
+          </div>
+
+          <div class="tab-panels">
+            <div class="panel" id="cascade-panel-1" role="tabpanel" aria-labelledby="cascade-tab-1" tabindex="0">
+              <div class="panel-top">
+                <div class="panel-number">01</div>
+                <div>
+                  <h3 class="h3">Ten-Year Horizon</h3>
+                  <p class="panel-time">10 years • Legacy filter</p>
+                </div>
+              </div>
+              <p class="panel-question">Who am I becoming, and what do I want my presence to contribute?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>What would make the next decade feel deeply well-lived?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Horizon Statement</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Live as a grounded creator: meaningful work, strong health, and presence with the people I love.</p></div>
+              </div>
+              <p class="why-note">This becomes the highest filter for every future decision, objective, and idea.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-2" role="tabpanel" aria-labelledby="cascade-tab-2" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">02</div>
+                <div>
+                  <h3 class="h3">Five-Year Milestones</h3>
+                  <p class="panel-time">5 years • Landmarks</p>
+                </div>
+              </div>
+              <p class="panel-question">What must be true five years from now for the horizon to feel real?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>Which visible and invisible landmarks would prove the direction is working?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Milestone Map</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>A sustainable creative practice, financial resilience, and a home rhythm that protects health.</p></div>
+              </div>
+              <p class="why-note">Milestones translate an abstract horizon into concrete evidence of progress.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-3" role="tabpanel" aria-labelledby="cascade-tab-3" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">03</div>
+                <div>
+                  <h3 class="h3">Three-Year Trajectory</h3>
+                  <p class="panel-time">3 years • Bridge</p>
+                </div>
+              </div>
+              <p class="panel-question">What capacities and structures must exist before the milestone becomes possible?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>What identity, skills, relationships, and systems need to mature?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Trajectory Brief</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Build craft mastery, stable income, and a trusted personal operating rhythm.</p></div>
+              </div>
+              <p class="why-note">The trajectory prevents dream-level goals from collapsing into unrealistic daily demands.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-4" role="tabpanel" aria-labelledby="cascade-tab-4" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">04</div>
+                <div>
+                  <h3 class="h3">One-Year Objectives</h3>
+                  <p class="panel-time">1 year • Annual compass</p>
+                </div>
+              </div>
+              <p class="panel-question">Which few objectives deserve this year?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>If only three things mattered this year, what would they be?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Annual Objectives</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Launch Project Meridian, strengthen daily clarity practice, and restore physical energy.</p></div>
+              </div>
+              <p class="why-note">One-year objectives become the anchor displayed every morning in Pocket Mode.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-5" role="tabpanel" aria-labelledby="cascade-tab-5" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">05</div>
+                <div>
+                  <h3 class="h3">Ninety-Day Quarter</h3>
+                  <p class="panel-time">90 days • Season of focus</p>
+                </div>
+              </div>
+              <p class="panel-question">What season moves this year forward?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>What can be meaningfully advanced in one focused season?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Quarter Focus</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Complete discovery, ship Meridian v1.0, and establish the weekly feedback loop.</p></div>
+              </div>
+              <p class="why-note">Ninety days is long enough for substance and short enough for urgency without panic.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-6" role="tabpanel" aria-labelledby="cascade-tab-6" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">06</div>
+                <div>
+                  <h3 class="h3">Monthly Focus</h3>
+                  <p class="panel-time">1 month • Momentum</p>
+                </div>
+              </div>
+              <p class="panel-question">What one emphasis earns momentum now?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>What should receive the best energy this month?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Monthly Theme</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Simplify onboarding and strengthen the morning ritual.</p></div>
+              </div>
+              <p class="why-note">Monthly focus converts quarterly ambition into a manageable center of gravity.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-7" role="tabpanel" aria-labelledby="cascade-tab-7" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">07</div>
+                <div>
+                  <h3 class="h3">Weekly Rhythm</h3>
+                  <p class="panel-time">1 week • Review loop</p>
+                </div>
+              </div>
+              <p class="panel-question">What three outcomes matter this week?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>What would make this week feel aligned rather than merely busy?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Weekly Plan &amp; Review</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Finish the review flow, protect two deep-work mornings, and rest fully one day.</p></div>
+              </div>
+              <p class="why-note">Weekly review catches drift early, before it becomes quarterly regret.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-8" role="tabpanel" aria-labelledby="cascade-tab-8" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">08</div>
+                <div>
+                  <h3 class="h3">Daily Golden Thread</h3>
+                  <p class="panel-time">1 day • One meaningful action</p>
+                </div>
+              </div>
+              <p class="panel-question">What single action pulls intention through today?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>If only one thing moved forward today, what would matter most?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Golden Thread</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Write the Sanctuary onboarding story for 25 focused minutes.</p></div>
+              </div>
+              <p class="why-note">The thread gives the day a spine. Everything else becomes supportive, not competing.</p>
+            </div>
+
+            <div class="panel" id="cascade-panel-9" role="tabpanel" aria-labelledby="cascade-tab-9" tabindex="0" hidden>
+              <div class="panel-top">
+                <div class="panel-number">09</div>
+                <div>
+                  <h3 class="h3">Present Step</h3>
+                  <p class="panel-time">Now • Immediate start</p>
+                </div>
+              </div>
+              <p class="panel-question">What is the next physical move?</p>
+              <div class="meta-grid">
+                <div class="meta-card"><span class="meta-label">Discovery question</span><p>What can I begin in the next five minutes without more preparation?</p></div>
+                <div class="meta-card"><span class="meta-label">Artifact</span><p>Immediate Start</p></div>
+                <div class="meta-card"><span class="meta-label">Example</span><p>Open the document and write the first sentence.</p></div>
+              </div>
+              <p class="why-note">Meaning becomes action only at this altitude: the present step.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-warm" id="pocket" aria-labelledby="pocket-title">
+      <div class="container">
+        <div class="pocket-grid">
+          <div class="reveal">
+            <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Pocket Mode</div>
+            <h2 class="h2" id="pocket-title">The whole system, compressed into a calm morning ritual.</h2>
+            <p class="lead">
+              Pocket Mode is the daily anchor. It does not open with a chaotic backlog. It opens with the one-year
+              objective, one golden action, and the habit stack that carries it.
+            </p>
+
+            <div class="feature-list">
+              <div class="feature-item">
+                <span class="feature-check" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </span>
+                <div><strong>One-year objective in view.</strong> The annual compass remains visible behind every daily choice.</div>
+              </div>
+              <div class="feature-item">
+                <span class="feature-check" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </span>
+                <div><strong>One golden action.</strong> Not fifteen competing priorities—one meaningful thread for the day.</div>
+              </div>
+              <div class="feature-item">
+                <span class="feature-check" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </span>
+                <div><strong>Daily habit stack.</strong> Small stabilizers support the golden thread instead of competing with it.</div>
+              </div>
+              <div class="feature-item">
+                <span class="feature-check" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </span>
+                <div><strong>Ritual completion.</strong> The purpose is orientation, not endless scrolling or inbox-style checking.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal delay-2">
+            <div class="phone" role="img" aria-label="Pocket Mode mockup showing a one-year objective, daily golden thread, and habit stack">
+              <div class="phone-screen">
+                <div class="screen-top">
+                  <div>
+                    <span class="screen-label">Pocket Mode</span>
+                    <strong style="font-family: var(--font-display); font-size: 1.35rem;">Good morning</strong>
+                  </div>
+                  <div class="screen-progress" id="habitCount" aria-live="polite">0/4</div>
+                </div>
+
+                <div class="screen-card objective">
+                  <span class="screen-label">1-Year Objective</span>
+                  <p>Launch Project Meridian as a calm, private life operating system.</p>
+                </div>
+
+                <div class="screen-card golden">
+                  <span class="screen-label">Daily Golden Thread</span>
+                  <p>Write the Sanctuary onboarding story for 25 focused minutes.</p>
+                  <button class="btn btn-primary btn-sm" id="goldenStart" type="button" style="margin-top: 0.9rem; width: 100%;">Start this thread</button>
+                </div>
+
+                <div class="screen-card">
+                  <span class="screen-label">Daily Habit Stack</span>
+                  <div class="habit-list">
+                    <button class="habit-toggle" type="button" data-habit aria-pressed="false">
+                      <span class="check" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                      </span>
+                      <span>Morning light + water</span>
+                    </button>
+                    <button class="habit-toggle" type="button" data-habit aria-pressed="false">
+                      <span class="check" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                      </span>
+                      <span>Five slow breaths</span>
+                    </button>
+                    <button class="habit-toggle" type="button" data-habit aria-pressed="false">
+                      <span class="check" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                      </span>
+                      <span>Ten-minute movement</span>
+                    </button>
+                    <button class="habit-toggle" type="button" id="habitGolden" data-habit aria-pressed="false">
+                      <span class="check" aria-hidden="true">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                      </span>
+                      <span>One golden thread</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="screen-note" id="pocketMessage" aria-live="polite">No backlog. No shame. One meaningful thread.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="guard" aria-labelledby="guard-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Approach-Goal Guard</div>
+          <h2 class="h2" id="guard-title">Turn “stop” into “toward.”</h2>
+          <p class="lead">
+            Avoidance goals keep attention on the unwanted behavior. Approach goals give the brain a rewarding
+            destination and a startable action. Meridian detects avoidance language and reframes it before it becomes
+            a daily metric.
+          </p>
+        </div>
+
+        <div class="guard-grid">
+          <div class="demo-card reveal">
+            <h3 class="h3">Try the reframer</h3>
+            <p class="muted" style="margin: 0.65rem 0 1.25rem;">Enter a common avoidance goal, or choose an example.</p>
+
+            <form id="goalForm" novalidate>
+              <div class="field">
+                <label for="goalInput">Avoidance goal</label>
+                <div class="input-row">
+                  <input class="text-input" id="goalInput" name="goalInput" type="text" value="Stop eating junk food" autocomplete="off" aria-describedby="guardOutputLabel">
+                  <button class="btn btn-primary" type="submit">Reframe</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="chips" aria-label="Example avoidance goals">
+              <button class="chip" type="button" data-goal="Stop eating junk food">Junk food</button>
+              <button class="chip" type="button" data-goal="Stop procrastinating">Procrastination</button>
+              <button class="chip" type="button" data-goal="Stop doomscrolling at night">Doomscrolling</button>
+              <button class="chip" type="button" data-goal="Stop wasting money">Spending</button>
+              <button class="chip" type="button" data-goal="Stop people-pleasing">People-pleasing</button>
+              <button class="chip" type="button" data-goal="Stop overthinking everything">Overthinking</button>
+            </div>
+          </div>
+
+          <div class="demo-card reveal delay-1">
+            <h3 class="h3">The reframed goal</h3>
+            <p class="muted" style="margin: 0.65rem 0 1.25rem;">Approach framing creates a destination, a reason, and a first move.</p>
+
+            <div class="output-card" id="guardOutput" aria-live="polite">
+              <span class="output-label" id="guardOutputLabel">Approach goal</span>
+              <p class="output-strong" id="guardApproach">Nourish my body with whole foods and calm, intentional meals.</p>
+
+              <span class="output-label">Why it works</span>
+              <p class="output-sub" id="guardWhy">Instead of monitoring the forbidden behavior, attention moves toward a positive identity and a repeatable choice.</p>
+
+              <span class="output-label">First step</span>
+              <p class="output-sub" id="guardStep" style="margin-bottom: 0;">Choose tomorrow’s first whole-food meal and prepare one ingredient tonight.</p>
+            </div>
+
+            <div class="before-after">
+              <div class="avoid-card">
+                <span class="output-label" style="color: var(--clay-dark);">Avoidance</span>
+                <p class="muted">“Don’t eat junk.”</p>
+              </div>
+              <div class="approach-card">
+                <span class="output-label">Approach</span>
+                <p class="muted">“Nourish my body with whole foods.”</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="incubator" aria-labelledby="incubator-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Shiny Object Incubator</div>
+          <h2 class="h2" id="incubator-title">Every idea is welcome. Not every idea is ready.</h2>
+          <p class="lead">
+            New inspiration can destroy an in-flight objective. The Incubator quarantines shiny objects for seven days,
+            then asks four synthesis questions and issues a clear verdict.
+          </p>
+        </div>
+
+        <div class="tab-system reveal" id="incubatorSystem">
+          <div class="timeline" role="tablist" aria-label="Seven day incubation timeline" aria-orientation="horizontal">
+            <button class="day-tab" id="incubator-tab-0" role="tab" aria-selected="true" aria-controls="incubator-panel-0" type="button">
+              <span class="day-dot">0</span>
+              <span class="day-label">Capture</span>
+            </button>
+            <button class="day-tab" id="incubator-tab-1" role="tab" aria-selected="false" aria-controls="incubator-panel-1" type="button" tabindex="-1">
+              <span class="day-dot">1</span>
+              <span class="day-label">Cool</span>
+            </button>
+            <button class="day-tab" id="incubator-tab-3" role="tab" aria-selected="false" aria-controls="incubator-panel-3" type="button" tabindex="-1">
+              <span class="day-dot">3</span>
+              <span class="day-label">Align</span>
+            </button>
+            <button class="day-tab" id="incubator-tab-5" role="tab" aria-selected="false" aria-controls="incubator-panel-5" type="button" tabindex="-1">
+              <span class="day-dot">5</span>
+              <span class="day-label">Synthesize</span>
+            </button>
+            <button class="day-tab" id="incubator-tab-7" role="tab" aria-selected="false" aria-controls="incubator-panel-7" type="button" tabindex="-1">
+              <span class="day-dot">7</span>
+              <span class="day-label">Verdict</span>
+            </button>
+          </div>
+
+          <div class="tab-panels">
+            <div class="dark-panel" id="incubator-panel-0" role="tabpanel" aria-labelledby="incubator-tab-0" tabindex="0">
+              <h3 class="h3">Day 0 — Capture without commitment</h3>
+              <p class="lead" style="margin-top: 0.85rem;">
+                The idea is safely stored, so your mind can release it. Nothing is lost, but nothing is allowed to
+                hijack the current quarter either.
+              </p>
+            </div>
+
+            <div class="dark-panel" id="incubator-panel-1" role="tabpanel" aria-labelledby="incubator-tab-1" tabindex="0" hidden>
+              <h3 class="h3">Day 1 — Let excitement cool</h3>
+              <p class="lead" style="margin-top: 0.85rem;">
+                Novelty is chemically compelling, but it is not evidence of importance. The first day separates the
+                rush of discovery from durable value.
+              </p>
+            </div>
+
+            <div class="dark-panel" id="incubator-panel-3" role="tabpanel" aria-labelledby="incubator-tab-3" tabindex="0" hidden>
+              <h3 class="h3">Day 3 — Test altitude alignment</h3>
+              <p class="lead" style="margin-top: 0.85rem;">
+                Meridian asks whether the idea serves the current one-year objective, quarterly season, and weekly
+                rhythm—or merely offers escape from them.
+              </p>
+            </div>
+
+            <div class="dark-panel" id="incubator-panel-5" role="tabpanel" aria-labelledby="incubator-tab-5" tabindex="0" hidden>
+              <h3 class="h3">Day 5 — Four synthesis questions</h3>
+              <ol class="question-list">
+                <li><span class="question-number">1</span><span>Does this serve my current altitude, or only my current mood?</span></li>
+                <li><span class="question-number">2</span><span>What would it replace if I integrated it now?</span></li>
+                <li><span class="question-number">3</span><span>What is the smallest useful version?</span></li>
+                <li><span class="question-number">4</span><span>Is it still alive after the excitement has cooled?</span></li>
+              </ol>
+            </div>
+
+            <div class="dark-panel" id="incubator-panel-7" role="tabpanel" aria-labelledby="incubator-tab-7" tabindex="0" hidden>
+              <h3 class="h3">Day 7 — The verdict</h3>
+              <p class="lead" style="margin-top: 0.85rem;">
+                The idea receives a clean decision. No backlog guilt. No silent accumulation. Only intentional
+                integration, future extension, or respectful retirement.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict-grid reveal delay-1">
+          <article class="verdict-card">
+            <span class="verdict-badge badge-sage">Integrate</span>
+            <p>The idea aligns with the current altitude. Convert it into a bounded project, habit, or next action.</p>
+          </article>
+          <article class="verdict-card">
+            <span class="verdict-badge badge-gold">Extend</span>
+            <p>The idea has life, but this is the wrong season. Schedule it for a future quarterly review.</p>
+          </article>
+          <article class="verdict-card">
+            <span class="verdict-badge badge-clay">Retire</span>
+            <p>The idea no longer holds energy or meaning. Release it cleanly, without guilt or open loops.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="loop" aria-labelledby="loop-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Weekly &amp; Quarterly Feedback Loop</div>
+          <h2 class="h2" id="loop-title">Adaptive pacing, not blind productivity pressure.</h2>
+          <p class="lead">
+            Meridian reviews objective telemetry, habit adherence, and sustainable effort. It raises the bar when
+            consistency is easy and lowers friction when life is heavy—preventing both stagnation and burnout.
+          </p>
+        </div>
+
+        <div class="tab-system reveal" id="loopSystem">
+          <div class="pill-tabs" role="tablist" aria-label="Feedback loop views" aria-orientation="horizontal">
+            <button class="pill-tab" id="loop-tab-weekly" role="tab" aria-selected="true" aria-controls="loop-panel-weekly" type="button">Weekly loop</button>
+            <button class="pill-tab" id="loop-tab-quarterly" role="tab" aria-selected="false" aria-controls="loop-panel-quarterly" type="button" tabindex="-1">Quarterly loop</button>
+          </div>
+
+          <div class="tab-panels">
+            <div class="panel" id="loop-panel-weekly" role="tabpanel" aria-labelledby="loop-tab-weekly" tabindex="0">
+              <h3 class="h3">Weekly objective telemetry</h3>
+              <p class="muted" style="margin: 0.75rem 0 1.5rem;">Illustrative signals used to adapt the coming week.</p>
+
+              <div class="metric">
+                <div class="metric-top"><strong>Objective telemetry</strong><span class="metric-value">78%</span></div>
+                <div class="bar"><span data-bar="78"></span></div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-top"><strong>Habit adherence</strong><span class="metric-value">84%</span></div>
+                <div class="bar"><span data-bar="84"></span></div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-top"><strong>Energy sustainability</strong><span class="metric-value">71%</span></div>
+                <div class="bar"><span data-bar="71"></span></div>
+              </div>
+
+              <div class="metric">
+                <div class="metric-top"><strong>Focus integrity</strong><span class="metric-value">88%</span></div>
+                <div class="bar"><span data-bar="88"></span></div>
+              </div>
+
+              <p class="why-note">The weekly review asks: What worked? What created friction? What one adjustment protects next week’s golden thread?</p>
+            </div>
+
+            <div class="panel" id="loop-panel-quarterly" role="tabpanel" aria-labelledby="loop-tab-quarterly" tabindex="0" hidden>
+              <h3 class="h3">Quarterly altitude audit</h3>
+              <p class="muted" style="margin: 0.75rem 0 1.5rem;">Every 90 days, Meridian reconnects execution to meaning.</p>
+
+              <div class="grid grid-2">
+                <div class="meta-card"><span class="meta-label">Alignment</span><p>Do quarterly actions still serve the one-year objectives and ten-year horizon?</p></div>
+                <div class="meta-card"><span class="meta-label">Pruning</span><p>Which objectives, habits, or projects no longer deserve energy?</p></div>
+                <div class="meta-card"><span class="meta-label">Recalibration</span><p>Should milestones move faster, slower, or in a different direction?</p></div>
+                <div class="meta-card"><span class="meta-label">Season design</span><p>What should the next ninety-day season make possible?</p></div>
+              </div>
+
+              <p class="why-note">Quarterly review prevents the common productivity failure mode: efficiently climbing the wrong mountain.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-4 reveal delay-1" style="margin-top: 1.5rem;">
+          <article class="card">
+            <div class="icon-wrap icon-clay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+            <h4 class="h3">Below 30%</h4>
+            <p><strong>Compassionate reset.</strong> Reduce scope, remove friction, and restore a winnable rhythm.</p>
+          </article>
+          <article class="card">
+            <div class="icon-wrap icon-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-6"/></svg></div>
+            <h4 class="h3">30–69%</h4>
+            <p><strong>Friction audit.</strong> Investigate energy, environment, clarity, and overload.</p>
+          </article>
+          <article class="card">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Z"/><path d="M12 12c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z"/></svg></div>
+            <h4 class="h3">70–85%</h4>
+            <p><strong>Steady practice.</strong> Maintain the rhythm and refine rather than overhaul.</p>
+          </article>
+          <article class="card">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 3 4 8 5-5 5 14H2L8 3z"/></svg></div>
+            <h4 class="h3">Above 85%</h4>
+            <p><strong>Gentle bar raise.</strong> Increase challenge carefully so success does not become stagnation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="security" aria-labelledby="security-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Sovereign Security &amp; Privacy</div>
+          <h2 class="h2" id="security-title">Your inner life deserves protection, not exploitation.</h2>
+          <p class="lead">
+            Meridian pairs a calm experience with serious security: passkeys, TOTP backup, encrypted local-first
+            storage, and automated offsite snapshots.
+          </p>
+        </div>
+
+        <div class="grid grid-4">
+          <article class="card reveal">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.5 12.5 8-8 3 3-3 3-2-2-2 2"/></svg></div>
+            <h3 class="h3">WebAuthn passkeys</h3>
+            <p>Passkeys are the primary authentication method: phishing-resistant, device-backed, and free from password reuse.</p>
+          </article>
+
+          <article class="card reveal delay-1">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg></div>
+            <h3 class="h3">TOTP backup</h3>
+            <p>Google Authenticator-style time-based codes provide a reliable second factor when a passkey device is unavailable.</p>
+          </article>
+
+          <article class="card reveal delay-2">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg></div>
+            <h3 class="h3">Encrypted local-first database</h3>
+            <p>Your reflections, objectives, and habits remain close to you and encrypted—not raw material for an advertising feed.</p>
+          </article>
+
+          <article class="card reveal delay-3">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19a4.5 4.5 0 1 0-.42-8.98 6 6 0 1 0-11.1 3.71A3.5 3.5 0 0 0 6.5 19h11Z"/></svg></div>
+            <h3 class="h3">Automated R2 snapshots</h3>
+            <p>Offsite backups add resilience against device loss, corruption, or infrastructure failure.</p>
+          </article>
+        </div>
+
+        <div class="security-flow reveal delay-1">
+          <div class="flow-card"><span class="flow-step">1</span><h4 class="h3">Authenticate</h4><p class="dark-muted">Passkey first, TOTP second.</p></div>
+          <div class="flow-card"><span class="flow-step">2</span><h4 class="h3">Store locally</h4><p class="dark-muted">Encrypted database close to the owner.</p></div>
+          <div class="flow-card"><span class="flow-step">3</span><h4 class="h3">Snapshot</h4><p class="dark-muted">Automated offsite copies in R2.</p></div>
+          <div class="flow-card"><span class="flow-step">4</span><h4 class="h3">Remain sovereign</h4><p class="dark-muted">Your private reflections stay private.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-surface" id="compare" aria-labelledby="compare-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Meridian vs Conventional Apps</div>
+          <h2 class="h2" id="compare-title">The difference is not features. It is framing.</h2>
+          <p class="lead">A conventional app asks, “What is left to do?” Meridian asks, “What is this day in service of?”</p>
+        </div>
+
+        <div class="table-wrap reveal">
+          <table class="comparison">
+            <caption>Comparison: conventional productivity apps versus Project Meridian</caption>
+            <thead>
+              <tr>
+                <th scope="col">Experience</th>
+                <th scope="col">Conventional productivity app</th>
+                <th scope="col">Project Meridian</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Experience">Primary unit</td>
+                <td data-label="Conventional">An endless list of tasks</td>
+                <td class="meridian-col" data-label="Meridian">One Daily Golden Thread connected to higher altitudes</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Emotional tone</td>
+                <td data-label="Conventional">Urgency, badges, streak pressure, and guilt</td>
+                <td class="meridian-col" data-label="Meridian">Calm, warmth, clarity, and humane recovery</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Missed day</td>
+                <td data-label="Conventional">A broken streak or growing red backlog</td>
+                <td class="meridian-col" data-label="Meridian">A recalibration point without shame</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">New ideas</td>
+                <td data-label="Conventional">Immediately enter the task list and compete for attention</td>
+                <td class="meridian-col" data-label="Meridian">Enter the 7-day Shiny Object Incubator</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Goal language</td>
+                <td data-label="Conventional">Often avoidance-based: stop, quit, don’t</td>
+                <td class="meridian-col" data-label="Meridian">Approach-based: nourish, build, protect, begin</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Morning experience</td>
+                <td data-label="Conventional">Notifications and accumulated obligations</td>
+                <td class="meridian-col" data-label="Meridian">Pocket Mode ritual: objective, action, habit stack</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Long-term meaning</td>
+                <td data-label="Conventional">Weak or absent connection to life direction</td>
+                <td class="meridian-col" data-label="Meridian">Nine-altitude cascade from ten-year horizon to present step</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Review rhythm</td>
+                <td data-label="Conventional">Manual, inconsistent, or metric-obsessed</td>
+                <td class="meridian-col" data-label="Meridian">Weekly telemetry plus quarterly altitude audits</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Privacy posture</td>
+                <td data-label="Conventional">Often password-based, cloud-dependent, and monetizable</td>
+                <td class="meridian-col" data-label="Meridian">Passkeys, TOTP backup, encrypted local-first database, R2 snapshots</td>
+              </tr>
+              <tr>
+                <td data-label="Experience">Ultimate outcome</td>
+                <td data-label="Conventional">Feeling busy</td>
+                <td class="meridian-col" data-label="Meridian">Feeling aligned</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="who" aria-labelledby="who-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Who It Is For</div>
+          <h2 class="h2" id="who-title">For people who want fewer tasks and more direction.</h2>
+        </div>
+
+        <div class="grid grid-4">
+          <article class="card who-card reveal">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+            <h3 class="h3">Creators with too many ideas</h3>
+            <p>Incubation protects current work while still honoring future possibility.</p>
+          </article>
+          <article class="card who-card reveal delay-1">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <h3 class="h3">Thoughtful professionals</h3>
+            <p>Weekly and quarterly loops connect execution to strategy without spreadsheet fatigue.</p>
+          </article>
+          <article class="card who-card reveal delay-2">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+            <h3 class="h3">Recovering productivity burnouts</h3>
+            <p>No shame streaks, no badge guilt, and no obligation museum.</p>
+          </article>
+          <article class="card who-card reveal delay-3">
+            <div class="icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></div>
+            <h3 class="h3">Privacy-conscious users</h3>
+            <p>Passkeys, encrypted local-first storage, and sovereign backups protect intimate life data.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-surface" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Questions</div>
+          <h2 class="h2" id="faq-title">What makes Meridian different?</h2>
+        </div>
+
+        <div class="faq reveal">
+          <details>
+            <summary>
+              Is Project Meridian just another to-do app?
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-body">
+              No. Tasks may exist, but they are not the center. Meridian begins with meaning, then descends through nine
+              altitudes until one golden daily action becomes obvious.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Do I have to complete all nine discovery sessions at once?
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-body">
+              No. The cascade can be completed gradually. Even a rough ten-year horizon and one-year objective can give
+              today’s golden thread meaningful context.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              What happens when I miss a day?
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-body">
+              Meridian does not punish you with a broken streak. The system treats the missed day as feedback, then helps
+              you choose the next aligned action.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Will the Shiny Object Incubator make me lose good ideas?
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-body">
+              No. Ideas are captured safely and revisited after seven days. The incubator prevents impulsive context
+              switching while still giving promising ideas a structured review.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              How private is my data?
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-body">
+              Meridian uses WebAuthn passkeys, Google Authenticator TOTP backup, encrypted local-first storage, and
+              automated offsite R2 snapshots. Your reflections are not treated as advertising material.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Does it work on mobile?
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-body">
+              Yes. Pocket Mode is designed specifically as a calm mobile morning ritual with touch-friendly controls and
+              a single-screen anchor.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="start" aria-labelledby="cta-title">
+      <div class="container">
+        <div class="cta-panel reveal">
+          <div class="eyebrow" style="margin-inline: auto;"><span class="eyebrow-dot" aria-hidden="true"></span> Begin</div>
+          <h2 class="h2" id="cta-title">Begin with one golden thread.</h2>
+          <p class="lead" style="text-align: center;">
+            You do not need another overflowing list. You need a calm place to orient, choose, and act.
+          </p>
+          <div class="cta-actions">
+            <!-- Replace /login with the deployed Meridian entry route -->
+            <a class="btn btn-primary" href="https://life.mihaitinca.com/" target="_blank" rel="noopener">Launch Project Meridian</a>
+            <a class="btn btn-ghost-dark" href="#cascade">Review the cascade</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="#top" aria-label="Project Meridian home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-text">
+            <strong>Project Meridian</strong>
+            <small>The intentional life operating system</small>
+          </span>
+        </a>
+        <p style="margin-top: 1rem; max-width: 42ch;">
+          Calm clarity. Grounded execution. Sovereign privacy.
+        </p>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#problem">Problem</a>
+        <a href="#philosophy">Philosophy</a>
+        <a href="#cascade">Cascade</a>
+        <a href="#pocket">Pocket Mode</a>
+        <a href="#guard">Goal Guard</a>
+        <a href="#incubator">Incubator</a>
+        <a href="#loop">Feedback</a>
+        <a href="#security">Security</a>
+        <a href="#start">Begin</a>
+      </nav>
+
+      <p style="max-width: 28ch;">
+        “Nature does not hurry, yet everything is accomplished.”
+        <br>
+        <span style="opacity: 0.7;">&copy; <span id="year">2026</span> Project Meridian.</span>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var progressBar = document.getElementById("progressBar");
+      var siteHeader = document.getElementById("siteHeader");
+      var navToggle = document.getElementById("navToggle");
+      var navLinks = document.getElementById("navLinks");
+      var yearEl = document.getElementById("year");
+      var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (yearEl) {
+        yearEl.textContent = String(new Date().getFullYear());
+      }
+
+      function updateScrollProgress() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+        if (progressBar) {
+          progressBar.style.width = progress + "%";
+        }
+
+        if (siteHeader) {
+          siteHeader.classList.toggle("scrolled", scrollTop > 24);
+        }
+      }
+
+      updateScrollProgress();
+      window.addEventListener("scroll", updateScrollProgress, { passive: true });
+      window.addEventListener("resize", updateScrollProgress, { passive: true });
+
+      function closeNav() {
+        if (!navLinks || !navToggle) return;
+        navLinks.classList.remove("open");
+        navToggle.setAttribute("aria-expanded", "false");
+        navToggle.setAttribute("aria-label", "Open navigation menu");
+      }
+
+      if (navToggle && navLinks) {
+        navToggle.addEventListener("click", function () {
+          var isOpen = navLinks.classList.toggle("open");
+          navToggle.setAttribute("aria-expanded", String(isOpen));
+          navToggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+        });
+
+        navLinks.querySelectorAll("a").forEach(function (link) {
+          link.addEventListener("click", closeNav);
+        });
+
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeNav();
+          }
+        });
+      }
+
+      var revealElements = document.querySelectorAll(".reveal");
+
+      function animateBars(root) {
+        if (!root) return;
+        var panel = root.matches('[role="tabpanel"]') ? root : root.querySelector('[role="tabpanel"]:not([hidden])');
+        var scope = panel || root;
+
+        scope.querySelectorAll("[data-bar]").forEach(function (bar) {
+          var value = bar.getAttribute("data-bar") || "0";
+          bar.style.width = "0%";
+          window.requestAnimationFrame(function () {
+            window.setTimeout(function () {
+              bar.style.width = value + "%";
+            }, prefersReducedMotion ? 0 : 90);
+          });
+        });
+      }
+
+      if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+        revealElements.forEach(function (el) {
+          el.classList.add("visible");
+        });
+        document.querySelectorAll(".tab-system").forEach(function (system) {
+          animateBars(system);
+        });
+      } else {
+        var revealObserver = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              animateBars(entry.target);
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -70px 0px" });
+
+        revealElements.forEach(function (el) {
+          revealObserver.observe(el);
+        });
+      }
+
+      function initTabSystem(system) {
+        if (!system) return;
+
+        var tabs = Array.prototype.slice.call(system.querySelectorAll('[role="tab"]'));
+        var panels = Array.prototype.slice.call(system.querySelectorAll('[role="tabpanel"]'));
+
+        if (!tabs.length || !panels.length) return;
+
+        function activateTab(tab, setFocus) {
+          var targetPanelId = tab.getAttribute("aria-controls");
+          var targetPanel = targetPanelId ? document.getElementById(targetPanelId) : null;
+
+          tabs.forEach(function (otherTab) {
+            var isSelected = otherTab === tab;
+            otherTab.setAttribute("aria-selected", String(isSelected));
+            otherTab.tabIndex = isSelected ? 0 : -1;
+          });
+
+          panels.forEach(function (panel) {
+            var isSelected = panel === targetPanel;
+            panel.hidden = !isSelected;
+          });
+
+          if (targetPanel && targetPanel.offsetParent !== null) {
+            animateBars(targetPanel);
+          }
+
+          if (setFocus) {
+            tab.focus();
+          }
+        }
+
+        tabs.forEach(function (tab, index) {
+          tab.addEventListener("click", function () {
+            activateTab(tab, false);
+          });
+
+          tab.addEventListener("keydown", function (event) {
+            var nextIndex = null;
+
+            if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+              nextIndex = (index + 1) % tabs.length;
+            } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+              nextIndex = (index - 1 + tabs.length) % tabs.length;
+            } else if (event.key === "Home") {
+              nextIndex = 0;
+            } else if (event.key === "End") {
+              nextIndex = tabs.length - 1;
+            }
+
+            if (nextIndex !== null) {
+              event.preventDefault();
+              activateTab(tabs[nextIndex], true);
+            }
+          });
+        });
+
+        var initialTab = tabs.find(function (tab) {
+          return tab.getAttribute("aria-selected") === "true";
+        }) || tabs[0];
+
+        activateTab(initialTab, false);
+      }
+
+      document.querySelectorAll(".tab-system").forEach(function (system) {
+        initTabSystem(system);
+      });
+
+      var navAnchors = Array.prototype.slice.call(document.querySelectorAll(".nav-links a[href^='#']"));
+      var spySections = navAnchors
+        .map(function (anchor) {
+          return document.querySelector(anchor.getAttribute("href"));
+        })
+        .filter(Boolean);
+
+      if ("IntersectionObserver" in window && spySections.length) {
+        var spyObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              navAnchors.forEach(function (anchor) {
+                var isActive = anchor.getAttribute("href") === "#" + entry.target.id;
+                anchor.classList.toggle("active", isActive);
+              });
+            }
+          });
+        }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+
+        spySections.forEach(function (section) {
+          spyObserver.observe(section);
+        });
+      }
+
+      var habitButtons = Array.prototype.slice.call(document.querySelectorAll("[data-habit]"));
+      var habitCount = document.getElementById("habitCount");
+      var pocketMessage = document.getElementById("pocketMessage");
+      var goldenStart = document.getElementById("goldenStart");
+      var goldenHabit = document.getElementById("habitGolden");
+
+      function updatePocketMode() {
+        var completed = habitButtons.filter(function (button) {
+          return button.getAttribute("aria-pressed") === "true";
+        }).length;
+
+        if (habitCount) {
+          habitCount.textContent = completed + "/" + habitButtons.length;
+        }
+
+        if (goldenStart) {
+          goldenStart.textContent = goldenHabit && goldenHabit.getAttribute("aria-pressed") === "true"
+            ? "Golden thread held"
+            : "Start this thread";
+        }
+
+        if (pocketMessage) {
+          if (completed === 0) {
+            pocketMessage.textContent = "No backlog. No shame. One meaningful thread.";
+          } else if (completed < habitButtons.length) {
+            pocketMessage.textContent = "Momentum is forming. Keep the thread gentle.";
+          } else {
+            pocketMessage.textContent = "Ritual complete. The day is oriented.";
+          }
+        }
+      }
+
+      habitButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          var pressed = button.getAttribute("aria-pressed") === "true";
+          button.setAttribute("aria-pressed", String(!pressed));
+          updatePocketMode();
+        });
+      });
+
+      if (goldenStart && goldenHabit) {
+        goldenStart.addEventListener("click", function () {
+          goldenHabit.click();
+        });
+      }
+
+      updatePocketMode();
+
+      var goalForm = document.getElementById("goalForm");
+      var goalInput = document.getElementById("goalInput");
+      var guardApproach = document.getElementById("guardApproach");
+      var guardWhy = document.getElementById("guardWhy");
+      var guardStep = document.getElementById("guardStep");
+      var goalChips = Array.prototype.slice.call(document.querySelectorAll("[data-goal]"));
+
+      var guardExamples = [
+        {
+          keys: ["junk", "food", "eat", "sugar", "diet"],
+          approach: "Nourish my body with whole foods and calm, intentional meals.",
+          why: "Instead of monitoring the forbidden behavior, attention moves toward a positive identity and a repeatable choice.",
+          step: "Choose tomorrow’s first whole-food meal and prepare one ingredient tonight."
+        },
+        {
+          keys: ["procrastinat", "delay", "lazy", "avoid work"],
+          approach: "Begin meaningful work with one small, protected first step.",
+          why: "Starting reduces the threat response that grows when a task is avoided. Momentum follows motion.",
+          step: "Set a 15-minute timer and complete only the first visible action."
+        },
+        {
+          keys: ["scroll", "phone", "social", "doom", "news"],
+          approach: "Protect my attention with intentional rest and offline rituals.",
+          why: "The brain needs a replacement reward. Calm restoration is more sustainable than sheer suppression.",
+          step: "Place the phone outside the bedroom and choose one analog evening ritual."
+        },
+        {
+          keys: ["money", "spend", "spending", "shopping", "buy"],
+          approach: "Direct my resources toward freedom, health, and lasting value.",
+          why: "A values-based spending goal creates a positive filter instead of a scarcity mindset.",
+          step: "Define one meaningful use of money this week and pause before non-essential purchases."
+        },
+        {
+          keys: ["people", "please", "pleasing", "say yes", "boundar"],
+          approach: "Honor my commitments by saying yes only to what aligns.",
+          why: "Boundaries become an act of integrity rather than rejection.",
+          step: "Write one clear, warm sentence you can use the next time you need to decline."
+        },
+        {
+          keys: ["overthink", "worry", "ruminate", "anxious", "anxiety"],
+          approach: "Move uncertainty into one clear, grounded next action.",
+          why: "Action narrows the loop of rumination and gives the mind evidence that progress is possible.",
+          step: "Name the decision, write the next physical step, and do only that step."
+        },
+        {
+          keys: ["sleep", "late", "bed", "night"],
+          approach: "Create an evening rhythm that restores energy for tomorrow.",
+          why: "Sleep improves more reliably through a positive wind-down ritual than through willpower alone.",
+          step: "Choose a consistent lights-down time and one calming pre-sleep action."
+        },
+        {
+          keys: ["smoke", "drink", "alcohol"],
+          approach: "Restore my body with clean breath, hydration, and calmer evening rituals.",
+          why: "Replacing the reward is more effective than fighting the urge in isolation.",
+          step: "Identify one trigger and prepare a healthier replacement before it appears."
+        }
+      ];
+
+      var fallbackReframe = {
+        approach: "Move toward what I actually want with one chosen, nourishing action.",
+        why: "Avoidance keeps attention on the unwanted pattern. Approach framing gives your brain a destination, an identity, and a startable behavior.",
+        step: "Name the desired state, then choose the smallest action that moves toward it today."
+      };
+
+      function findReframe(rawText) {
+        var text = (rawText || "").toLowerCase();
+
+        for (var i = 0; i < guardExamples.length; i += 1) {
+          var example = guardExamples[i];
+          for (var j = 0; j < example.keys.length; j += 1) {
+            if (text.indexOf(example.keys[j]) !== -1) {
+              return example;
+            }
+          }
+        }
+
+        return fallbackReframe;
+      }
+
+      function renderGuard(rawText) {
+        var reframe = findReframe(rawText);
+
+        if (guardApproach) guardApproach.textContent = reframe.approach;
+        if (guardWhy) guardWhy.textContent = reframe.why;
+        if (guardStep) guardStep.textContent = reframe.step;
+      }
+
+      if (goalForm && goalInput) {
+        goalForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          renderGuard(goalInput.value);
+        });
+
+        goalInput.addEventListener("input", function () {
+          goalChips.forEach(function (chip) {
+            chip.classList.remove("active");
+          });
+        });
+
+        goalChips.forEach(function (chip) {
+          chip.addEventListener("click", function () {
+            var value = chip.getAttribute("data-goal") || "";
+            goalInput.value = value;
+            renderGuard(value);
+
+            goalChips.forEach(function (otherChip) {
+              otherChip.classList.remove("active");
+            });
+
+            chip.classList.add("active");
+          });
+        });
+
+        renderGuard(goalInput.value);
+      }
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener("click", function (event) {
+          var targetId = anchor.getAttribute("href");
+          if (!targetId || targetId === "#") return;
+
+          var target = document.querySelector(targetId);
+          if (!target) return;
+
+          event.preventDefault();
+          target.scrollIntoView({
+            behavior: prefersReducedMotion ? "auto" : "smooth",
+            block: "start"
+          });
+
+          if (history.replaceState) {
+            history.replaceState(null, "", targetId);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

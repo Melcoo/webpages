@@ -306,10 +306,9 @@ nav.scrolled{padding:11px clamp(20px,4vw,48px);background:var(--glass);backdrop-
   color:var(--text);transition:.3s;flex-shrink:0}
 .arrow-btn svg{width:15px;height:15px}
 .card:hover .arrow-btn{background:var(--grad);border-color:transparent;color:var(--btn-ink);transform:translate(3px,-3px)}
-.card.private{border-style:dashed;background:transparent;cursor:default}
-.card.private:hover{transform:none;border-color:rgba(139,123,255,.25);background:var(--private-hover);box-shadow:none}
-.card.private .arrow-btn{opacity:.35}
-.card.private:hover .arrow-btn{background:transparent;border-color:var(--border);color:var(--text);transform:none}
+.card.private{border-style:dashed;border-color:rgba(139,123,255,.35);cursor:pointer}
+.card.private:hover{border-color:rgba(139,123,255,.7)}
+.card.private .arrow-btn{opacity:.85}
 
 /* ── About ────────────────────────────────── */
 .about-grid{display:grid;grid-template-columns:1.25fr .85fr;gap:52px;align-items:start}
@@ -527,7 +526,7 @@ footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
     </span>
     <span class="chip">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-      <span id="projectCount">4</span>&nbsp;public projects
+      <span id="projectCount">6</span>&nbsp;public projects
     </span>
     <span class="chip">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
@@ -624,22 +623,53 @@ footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
       </div>
     </a>
 
-    <!-- Private area teaser (Question #5: keep or remove?) -->
-    <div class="card private reveal" style="transition-delay:.36s">
+    <a class="card reveal" href="amtis/" style="--g1:#ea580c;--g2:#f97316;transition-delay:.36s">
       <div class="card-top">
-        <div class="icon-tile" style="--g1:#6b7280;--g2:#374151;box-shadow:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 14.5v2.5"/></svg>
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
         </div>
         <span class="card-num">05</span>
       </div>
-      <h3>Private Lab</h3>
-      <p class="desc">Experiments and private builds that will live behind authentication. This door is still under construction.</p>
-      <div class="tags"><span class="tag">Auth</span><span class="tag">Members only</span></div>
+      <h3>AMTIS Telemetry</h3>
+      <p class="desc">Autonomous motorcycle GPS tracking and 10Hz telemetry logger with zero phone reliance and automatic Wi-Fi sync.</p>
+      <div class="tags"><span class="tag">Telemetry</span><span class="tag">Motorcycles</span><span class="tag">GNSS</span><span class="tag">Hardware</span></div>
       <div class="card-foot">
-        <span class="badge"><span class="dot amber"></span>COMING SOON</span>
+        <span class="badge"><span class="dot"></span>HARDWARE · WEB</span>
         <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
       </div>
-    </div>
+    </a>
+
+    <a class="card reveal" href="project-meridian/" style="--g1:#2f5d4a;--g2:#c99a4e;transition-delay:.45s">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+        </div>
+        <span class="card-num">06</span>
+      </div>
+      <h3>Project Meridian</h3>
+      <p class="desc">Intentional Life Operating System connecting a 10-year horizon to daily action through a 9-altitude discovery cascade.</p>
+      <div class="tags"><span class="tag">Life OS</span><span class="tag">Sanctuary</span><span class="tag">Concept</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>INTERACTIVE</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
+
+    <a class="card private reveal" href="https://life.mihaitinca.com/" target="_blank" rel="noopener" style="--g1:#6366f1;--g2:#4338ca;transition-delay:.54s">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 14.5v2.5"/></svg>
+        </div>
+        <span class="card-num">07</span>
+      </div>
+      <h3>Private Lab</h3>
+      <p class="desc">Authenticated experiments and production builds hosted securely behind sign-in at life.mihaitinca.com.</p>
+      <div class="tags"><span class="tag">Auth</span><span class="tag">Members only</span><span class="tag">Portal</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>LIVE · AUTH</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
 
   </div>
 </section>
@@ -657,7 +687,7 @@ footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
       as a conversation with an AI and end as a self-contained web app — no backend, no bloat, just something
       useful you can open in a browser.</p>
       <p>This site is my <strong>public index</strong>: everything listed is live and free to explore. Private
-      experiments will sit behind authentication once that door is ready.</p>
+      experiments and production apps live behind authentication at <a href="https://life.mihaitinca.com/" target="_blank" rel="noopener" style="text-decoration:underline">life.mihaitinca.com</a>.</p>
       <p>When I'm not shipping, I'm probably riding — two wheels, open road, full throttle. If a tool here saves
       you time — or sparks an idea — that's exactly the point.</p>
       <div class="about-sign">— Mihai</div>
@@ -742,8 +772,8 @@ const SITE_CONFIG = {
    'https://formspree.io/f/xyzabc' or 'https://api.web3forms.com/submit' */
 const FORM_ENDPOINT = '';
 
-const ROTATOR_WORDS = ['world-clock','srl-launchpad-2026','micro-saas-research','ai-invoice-os','something new…'];
-const PROJECT_COUNT = 4; /* TODO: keep in sync if you add/remove public projects */
+const ROTATOR_WORDS = ['world-clock','srl-launchpad-2026','micro-saas-research','ai-invoice-os','amtis-telemetry','project-meridian','something new…'];
+const PROJECT_COUNT = 6; /* 6 public projects + Private Lab portal */
 
 /* ── Wire every mailto / github link from config ── */
 const mailSubject = encodeURIComponent('Hello from ' + SITE_CONFIG.site);

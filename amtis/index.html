@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMTIS — Autonomous Motorcycle GPS Tracking & Telemetry</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            navy: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .map-grid {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md bg-white/90 border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white font-black tracking-wider shadow-md shadow-brand-500/20">
+                    A
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">AMTIS</span>
+                    <span class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase mt-0.5">Motorcycle GPS Telemetry</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+                <a href="#concept" class="hover:text-brand-600 transition-colors">The Concept</a>
+                <a href="#how-it-works" class="hover:text-brand-600 transition-colors">How It Works</a>
+                <a href="#screens" class="hover:text-brand-600 transition-colors">App Screens</a>
+                <a href="#webapp" class="hover:text-brand-600 transition-colors">Features</a>
+                <a href="#hardware" class="hover:text-brand-600 transition-colors">Hardware</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <a href="#screens" class="px-5 py-2.5 text-sm font-bold rounded-xl bg-slate-900 hover:bg-slate-800 transition-all text-white shadow-sm flex items-center space-x-2">
+                    <i data-lucide="layout" class="w-4 h-4 text-brand-500"></i>
+                    <span>See Web App</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 overflow-hidden map-grid border-b border-slate-200 bg-white">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left: Core Value Proposition -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-xs font-bold text-brand-700">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>10Hz Precision GNSS • Zero Mobile Phone Reliance</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+                        Autonomous GPS Tracking & Ride Telemetry for Motorcyclists.
+                    </h1>
+
+                    <p class="text-lg text-slate-600 max-w-2xl font-normal leading-relaxed">
+                        A dedicated smart GPS tracker that sits invisibly under your motorcycle seat. It starts logging the microsecond your ignition turns on, records your exact speed and GPS line 10 times per second, and automatically uploads your rides to your private web dashboard when you park at home.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#concept" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-center shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center space-x-2">
+                            <span>Understand The Concept</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#screens" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-bold text-center transition-all flex items-center justify-center space-x-2">
+                            <i data-lucide="monitor" class="w-4 h-4 text-brand-600"></i>
+                            <span>Preview Web Dashboard</span>
+                        </a>
+                    </div>
+
+                    <!-- Direct Highlights -->
+                    <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-100 text-left">
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">GPS Rate</div>
+                            <div class="text-2xl font-black text-slate-900 font-mono mt-0.5">10 Hz</div>
+                            <div class="text-[11px] text-brand-600 font-medium mt-0.5">10 fixes / sec</div>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Operation</div>
+                            <div class="text-2xl font-black text-slate-900 mt-0.5">100%</div>
+                            <div class="text-[11px] text-emerald-600 font-medium mt-0.5">Fully automatic</div>
+                        </div>
+                        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Bike Battery</div>
+                            <div class="text-2xl font-black text-slate-900 font-mono mt-0.5">0.0 mA</div>
+                            <div class="text-[11px] text-slate-500 font-medium mt-0.5">Off when parked</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Realistic Telemetry Live Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-xl relative">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                                <span class="text-xs font-bold font-mono text-slate-700 tracking-wider">ACTIVE GPS LOGGING</span>
+                            </div>
+                            <span class="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-slate-100 text-slate-600">u-blox M10 GNSS</span>
+                        </div>
+
+                        <!-- Live Metrics -->
+                        <div class="grid grid-cols-2 gap-4 my-5">
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                                <div class="text-xs font-medium text-slate-500 uppercase">Current Speed</div>
+                                <div class="text-3xl font-black text-slate-900 font-mono mt-1">94.2 <span class="text-sm font-normal text-slate-500">km/h</span></div>
+                                <div class="text-xs text-brand-600 font-medium mt-1">Max: 138.4 km/h</div>
+                            </div>
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80">
+                                <div class="text-xs font-medium text-slate-500 uppercase">GPS Accuracy</div>
+                                <div class="text-3xl font-black text-emerald-600 font-mono mt-1">1.4 <span class="text-sm font-normal text-slate-500">m</span></div>
+                                <div class="text-xs text-slate-500 font-medium mt-1">19 Satellites Locked</div>
+                            </div>
+                        </div>
+
+                        <!-- GPS Track Line Simulation -->
+                        <div class="bg-slate-900 rounded-2xl p-4 text-white">
+                            <div class="flex justify-between items-center text-xs font-mono mb-2 text-slate-400">
+                                <span>GPS ROUTE ELEVATION & SPEED</span>
+                                <span class="text-emerald-400 font-semibold">10HZ RECORDING</span>
+                            </div>
+                            <div class="h-20 w-full flex items-end space-x-1.5 pt-2">
+                                <div class="w-full bg-emerald-500/30 rounded-t h-[40%]"></div>
+                                <div class="w-full bg-emerald-500/40 rounded-t h-[55%]"></div>
+                                <div class="w-full bg-amber-500/60 rounded-t h-[75%]"></div>
+                                <div class="w-full bg-brand-500 rounded-t h-[95%]"></div>
+                                <div class="w-full bg-brand-500 rounded-t h-[85%]"></div>
+                                <div class="w-full bg-emerald-500/60 rounded-t h-[60%]"></div>
+                                <div class="w-full bg-emerald-500/40 rounded-t h-[45%]"></div>
+                                <div class="w-full bg-emerald-500/50 rounded-t h-[50%]"></div>
+                            </div>
+                            <div class="flex justify-between text-[11px] font-mono text-slate-400 mt-2 border-t border-slate-800 pt-1.5">
+                                <span>Mountain Ascent</span>
+                                <span>Apex Speed</span>
+                                <span>Valley Straight</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
+                            <span>Target: PostGIS Ingestion</span>
+                            <span class="text-emerald-600 font-bold">READY TO SYNC</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: The Concept (Explicitly Linked to #concept) -->
+    <section id="concept" class="py-24 bg-slate-50 border-b border-slate-200 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="text-xs uppercase font-mono font-bold tracking-widest text-brand-600 bg-orange-100/60 px-3 py-1 rounded-full">
+                    THE PHILOSOPHY
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 tracking-tight">
+                    Why Phone Apps Fail for Motorcycles — and Why AMTIS Exists
+                </h2>
+                <p class="text-slate-600 mt-4 text-base leading-relaxed">
+                    Every rider wants a log of their best rides, canyon trips, and track days. But current tracking solutions are flawed, frustrating, or downright dangerous for motorbikes.
+                </p>
+            </div>
+
+            <!-- Problem vs Solution Comparison -->
+            <div class="grid md:grid-cols-2 gap-8 items-stretch">
+                <!-- The Traditional Way (Problems) -->
+                <div class="bg-white rounded-3xl p-8 border border-red-100 shadow-sm space-y-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
+                            <i data-lucide="x-circle" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">The Problem with Phone Apps</h3>
+                    </div>
+
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Camera sensor damage:</strong> Handlebar vibration destroys optical image stabilization (OIS) on expensive phones within months.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="battery-warning" class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Battery drain & overheating:</strong> Running 1Hz GPS and screen in direct sunlight overheats phones and drains the battery fast.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="user-x" class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Glove friction & forgetting:</strong> You forget to press "Start Ride", or have to remove thick leather gloves just to tap a screen at a gas station.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="map-pin-off" class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Sluggish 1Hz GPS:</strong> Standard phones sample GPS once every second. At 100 km/h, you travel 28 meters between points, cutting corners and losing precision.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- The AMTIS Way (The Solution) -->
+                <div class="bg-white rounded-3xl p-8 border border-emerald-200 shadow-md space-y-6 ring-2 ring-emerald-500/10">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                            <i data-lucide="check-circle" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">The AMTIS Zero-Touch Solution</h3>
+                    </div>
+
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="zap" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Tied to ignition power:</strong> Turns ON when you start the bike, turns OFF when you park. Never touch a button or charge a separate gadget.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="radio" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>True 10Hz high-frequency GPS:</strong> Samples position and speed 10 times per second (every 2.8 meters at 100 km/h) for razor-sharp telemetry lines.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="wifi" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Automatic home Wi-Fi sync:</strong> When you pull into your driveway or garage, your rides automatically upload to your private cloud before you unbuckle your helmet.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <i data-lucide="shield" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span><strong>Zero parasitic battery drain:</strong> Uses no power whatsoever when the bike is parked. Your motorcycle battery remains 100% fresh all winter.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: How It Works (Step by Step) -->
+    <section id="how-it-works" class="py-24 bg-white border-b border-slate-200 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="text-xs uppercase font-mono font-bold tracking-widest text-brand-600 bg-orange-100/60 px-3 py-1 rounded-full">
+                    SEAMLESS WORKFLOW
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 tracking-tight">
+                    How AMTIS Works in Daily Riding
+                </h2>
+                <p class="text-slate-600 mt-4 text-base">
+                    From the moment you start your engine to the moment you review your route on your couch.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 relative">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-500 text-white font-black text-xl flex items-center justify-center shadow-md mb-6">
+                        1
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Turn Ignition ON</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        The USB-C power rail on your motorcycle powers the tracker. The u-blox M10 GPS module locks onto satellites in under 2 seconds. No apps to open, no Bluetooth pairing.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 relative">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-black text-xl flex items-center justify-center shadow-md mb-6">
+                        2
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Ride Anywhere</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Every twist, speed change, and straightaway is captured at 10Hz and securely saved to solid-state flash memory. Even if you ride through areas with no cellular signal, nothing is lost.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 relative">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-black text-xl flex items-center justify-center shadow-md mb-6">
+                        3
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">Park & View</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        When you park near your home, the tracker connects to your Wi-Fi, uploads the ride files to your cloud server, and powers off safely with the ignition. Open your laptop and your ride is already waiting!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: Web App Screen Previews (NEW REQUEST) -->
+    <section id="screens" class="py-24 bg-slate-100/70 border-b border-slate-200 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="text-xs uppercase font-mono font-bold tracking-widest text-brand-600 bg-orange-100/60 px-3 py-1 rounded-full">
+                    DASHBOARD SHOWCASE
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 tracking-tight">
+                    Preview the Web App Screens
+                </h2>
+                <p class="text-slate-600 mt-4 text-base">
+                    Here is what your private cloud dashboard looks like when you sit down with your coffee after a ride.
+                </p>
+            </div>
+
+            <!-- Screen Preview 1: The Interactive Route Replay & Speed Heatmap -->
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden mb-12">
+                <div class="bg-slate-900 px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                        <span class="text-xs font-mono text-slate-400 ml-4 font-semibold">https://amtis.yourcloud.com/rides/2026-10-10-alps-loop</span>
+                    </div>
+                    <span class="text-xs font-mono bg-slate-800 text-brand-500 px-2.5 py-1 rounded font-bold">10Hz High-Res Track</span>
+                </div>
+
+                <div class="p-8">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-6 border-b border-slate-200">
+                        <div>
+                            <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Sunday Morning Canyon Loop</span>
+                            <h3 class="text-2xl font-black text-slate-900">Passo di Gavia • 142.6 km Total</h3>
+                        </div>
+                        <div class="flex items-center space-x-6 text-sm font-mono">
+                            <div><span class="text-slate-400 block text-xs">RIDE TIME</span><span class="font-bold text-slate-900">2h 14m</span></div>
+                            <div><span class="text-slate-400 block text-xs">AVG SPEED</span><span class="font-bold text-slate-900">63.8 km/h</span></div>
+                            <div><span class="text-slate-400 block text-xs">TOP SPEED</span><span class="font-bold text-brand-600">148.2 km/h</span></div>
+                            <div><span class="text-slate-400 block text-xs">ELEVATION GAIN</span><span class="font-bold text-emerald-600">+1,840 m</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Simulated Map Interface -->
+                    <div class="relative mt-6 rounded-2xl bg-slate-950 p-6 text-white min-h-[380px] flex flex-col justify-between overflow-hidden shadow-inner">
+                        <!-- Stylized Map Canvas Background -->
+                        <div class="absolute inset-0 opacity-20 pointer-events-none map-grid"></div>
+
+                        <!-- Simulated GPS Route Line on Dark Map -->
+                        <div class="relative z-10 flex items-center justify-between">
+                            <div class="bg-slate-900/90 backdrop-blur border border-slate-800 p-3 rounded-xl flex items-center space-x-3 text-xs font-mono">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <span>MAP LAYER: HIGH-RES SATELLITE (POSTGIS GEOM)</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono font-semibold">2D Overhead</button>
+                                <button class="px-3 py-1.5 rounded-lg bg-brand-600 text-white text-xs font-mono font-semibold">3D Flyover</button>
+                            </div>
+                        </div>
+
+                        <!-- Route Graphic Overlay -->
+                        <div class="relative z-10 py-12 flex items-center justify-center">
+                            <div class="relative w-full max-w-2xl h-32 flex items-center justify-center">
+                                <!-- Glowing Route Polyline -->
+                                <svg class="w-full h-full" viewBox="0 0 600 120" fill="none">
+                                    <path d="M 20 80 Q 90 20 180 60 T 320 40 T 450 90 T 580 30" stroke="url(#speedGradient)" stroke-width="6" stroke-linecap="round" fill="none" />
+                                    <defs>
+                                        <linearGradient id="speedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#10b981" />
+                                            <stop offset="30%" stop-color="#f59e0b" />
+                                            <stop offset="60%" stop-color="#ef4444" />
+                                            <stop offset="85%" stop-color="#f97316" />
+                                            <stop offset="100%" stop-color="#10b981" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <!-- Interactive Scrubber Dot -->
+                                <div class="absolute left-[60%] top-[30%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                                    <div class="w-5 h-5 rounded-full bg-white border-4 border-brand-500 shadow-lg animate-pulse"></div>
+                                    <div class="bg-white text-slate-900 text-[11px] font-mono font-bold px-2 py-0.5 rounded shadow mt-1 whitespace-nowrap">
+                                        Hairpin Entry: 42 km/h
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Playback Scrubber Bar -->
+                        <div class="relative z-10 bg-slate-900/90 backdrop-blur border border-slate-800 p-4 rounded-xl">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                                <span class="flex items-center space-x-2">
+                                    <i data-lucide="play" class="w-4 h-4 text-brand-500 fill-brand-500"></i>
+                                    <span>01:14:22 / 02:14:00</span>
+                                </span>
+                                <span>Speed Color-Key: <span class="text-emerald-400">Low (30-60)</span> • <span class="text-amber-400">Mid (60-100)</span> • <span class="text-red-400">High (100+)</span></span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2 relative cursor-pointer">
+                                <div class="bg-gradient-to-r from-emerald-500 via-amber-500 to-brand-500 h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two Smaller Screen Previews (Side by Side) -->
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Screen 2: Cornering & Telemetry Diagnostics -->
+                <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="p-3 bg-brand-50 rounded-xl text-brand-600">
+                            <i data-lucide="git-commit" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-900">Apex & Corner Analysis</h4>
+                            <p class="text-xs text-slate-500 font-medium">Automatic detection of every turn on your route</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-slate-500 uppercase">Corner #14 (Right Hairpin)</span>
+                                <div class="text-sm font-bold text-slate-900 mt-0.5">Entry: 82 km/h • Apex: 39 km/h</div>
+                            </div>
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-100 text-emerald-800">Clean Line</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-slate-500 uppercase">Corner #15 (Left Sweeper)</span>
+                                <div class="text-sm font-bold text-slate-900 mt-0.5">Entry: 114 km/h • Apex: 76 km/h</div>
+                            </div>
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-orange-100 text-brand-700">Hard Trail-Braking</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-slate-500 uppercase">Corner #16 (Chicane)</span>
+                                <div class="text-sm font-bold text-slate-900 mt-0.5">Entry: 65 km/h • Apex: 48 km/h</div>
+                            </div>
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-100 text-emerald-800">Smooth Roll-On</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 3: Digital Garage & Odometer History -->
+                <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-lg">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="p-3 bg-brand-50 rounded-xl text-brand-600">
+                            <i data-lucide="wrench" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-900">Digital Motorcycle Garage</h4>
+                            <p class="text-xs text-slate-500 font-medium">Automatic wear monitoring from real ride data</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50">
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                                <span class="font-bold text-slate-700">Rear Tire Life (Pirelli Diablo Rosso IV)</span>
+                                <span class="font-mono font-bold text-brand-600">3,420 km / 5,000 km</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-brand-500 h-2.5 rounded-full" style="width: 68%"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50">
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                                <span class="font-bold text-slate-700">Engine Oil Service Interval</span>
+                                <span class="font-mono font-bold text-emerald-600">42 Operating Hours</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 84%"></div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex justify-between items-center text-xs font-mono text-slate-500">
+                            <span>Total Bike Distance: <strong>14,892 km</strong></span>
+                            <span class="text-brand-600 font-bold">12 Rides Stored</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION: Extended Web App Potential -->
+    <section id="webapp" class="py-24 bg-white border-b border-slate-200 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <span class="text-xs uppercase font-mono font-bold tracking-widest text-brand-600 bg-orange-100/60 px-3 py-1 rounded-full">
+                    THE CLOUD ADVANTAGE
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 tracking-tight">
+                    What Else Can the Web App Do?
+                </h2>
+                <p class="text-slate-600 mt-4 text-base">
+                    Because AMTIS runs on a real PostGIS spatial engine, your data isn't trapped in a proprietary closed garden.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-brand-600 flex items-center justify-center mb-4">
+                        <i data-lucide="share-2" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">1-Click GPX Track Export</h3>
+                    <p class="text-slate-600 text-sm">Export pure, battery-loss-free GPX files for Garmin, Rever, Calimoto, or Google Earth with no awkward dropouts.</p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
+                        <i data-lucide="merge" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Intelligent Mid-Ride Stitching</h3>
+                    <p class="text-slate-600 text-sm">Stopped for fuel, lunch, or a scenic photo? The cloud automatically stitches separate engine cycles into a single coherent trip.</p>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Private & Self-Hosted</h3>
+                    <p class="text-slate-600 text-sm">Hosted on your own free cloud tier. Your speeds, private routes, and riding habits are never sold to insurance companies or advertisers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: Hardware Overview -->
+    <section id="hardware" class="py-24 bg-slate-50 border-b border-slate-200 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 space-y-5">
+                    <span class="text-xs uppercase font-mono font-bold tracking-widest text-brand-600 bg-orange-100/60 px-3 py-1 rounded-full">
+                        ROBUST ELECTRONICS
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Built for the Harsh Realities of a Motorcycle
+                    </h2>
+                    <p class="text-slate-600 text-base leading-relaxed">
+                        Engine vibration, rain spray, heat soak, and ignition voltage spikes kill cheap gadgets. AMTIS is engineered with an automotive power supply and solid-state flash memory.
+                    </p>
+
+                    <div class="space-y-3 pt-2">
+                        <div class="flex items-start space-x-3">
+                            <i data-lucide="check" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span class="text-sm text-slate-700"><strong>u-blox M10 GNSS:</strong> Simultaneous lock on GPS, Galileo, GLONASS, and BeiDou satellites.</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i data-lucide="check" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span class="text-sm text-slate-700"><strong>Power Loss Capacitor:</strong> Automatically flushes and seals your ride file the split-second you turn the key off.</span>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i data-lucide="check" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+                            <span class="text-sm text-slate-700"><strong>Compact Enclosure:</strong> Smaller than a pack of cards, slips discreetly under any motorcycle seat.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6">
+                    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-lg">
+                        <h3 class="text-xl font-bold text-slate-900 mb-6">Hardware Specifications</h3>
+                        <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block">PROCESSOR</span>
+                                <span class="font-bold text-slate-900 text-sm mt-1 block">ESP32-S3 Dual-Core</span>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block">GPS UPDATE RATE</span>
+                                <span class="font-bold text-brand-600 text-sm mt-1 block">10 Hz (10 fixes/s)</span>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block">POWER SOURCE</span>
+                                <span class="font-bold text-slate-900 text-sm mt-1 block">Ignition 5V USB-C</span>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block">STANDBY DRAIN</span>
+                                <span class="font-bold text-emerald-600 text-sm mt-1 block">0.0 mA (100% Off)</span>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block">SYNC PROTOCOL</span>
+                                <span class="font-bold text-slate-900 text-sm mt-1 block">Automatic Wi-Fi 4</span>
+                            </div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-slate-400 block">FILE INTEGRITY</span>
+                                <span class="font-bold text-slate-900 text-sm mt-1 block">CRC32 + Manifest</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-white text-slate-500 text-sm border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-900 text-white font-black flex items-center justify-center text-sm">
+                    A
+                </div>
+                <span class="font-bold text-slate-900">AMTIS</span>
+                <span class="text-xs text-slate-400">| Autonomous Motorcycle Telemetry & Ingestion System</span>
+            </div>
+
+            <div class="text-xs font-mono text-slate-400">
+                10Hz GNSS • PostGIS Ingestion • Zero-Touch
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
