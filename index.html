@@ -176,7 +176,7 @@ nav.scrolled{padding:11px clamp(20px,4vw,48px);background:var(--glass);backdrop-
 
 /* ── 🏍️ Honda CBR1000RR-R Fireblade SP — HRC ride-by stage ── */
 .moto-stage{--track-w:min(580px,92vw);display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 auto 14px}
-.moto-strip{position:relative;width:var(--track-w);height:106px;overflow:hidden;
+.moto-strip{position:relative;width:var(--track-w);height:136px;overflow:hidden;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 10%,#000 90%,transparent 100%);
   mask-image:linear-gradient(90deg,transparent 0%,#000 10%,#000 90%,transparent 100%)}
 .moto-road{position:absolute;bottom:10px;left:0;right:0;height:2px;overflow:hidden;
@@ -184,13 +184,24 @@ nav.scrolled{padding:11px clamp(20px,4vw,48px);background:var(--glass);backdrop-
 .moto-dashes{position:absolute;inset:0;width:calc(100% + 44px);
   background:repeating-linear-gradient(90deg,var(--faint) 0 16px,transparent 16px 44px);
   opacity:.55}
-.moto{position:absolute;bottom:9px;left:0;width:224px;height:94px;
+.moto{position:absolute;bottom:10px;left:0;width:224px;height:121px;
   transform:translateX(calc(var(--track-w) * 0.5 - 112px));opacity:1}
-.moto-chassis{width:100%;height:100%;transform-origin:42% 85%}
-.moto-bike{width:224px;height:auto;overflow:visible;filter:drop-shadow(0 5px 10px var(--moto-shadow))}
-.moto-shadow{position:absolute;bottom:-3px;left:18%;width:68%;height:10px;border-radius:50%;
+.moto-chassis{position:relative;width:100%;height:100%;transform-origin:42% 88%}
+.moto-wheel{position:absolute;z-index:1;pointer-events:none;user-select:none;transform-origin:center}
+.moto-wheel-rear{left:7.25%;top:53.78%;width:20.07%;height:37.11%}
+.moto-wheel-front{left:75.28%;top:54.98%;width:20.07%;height:37.11%}
+.moto-bike{position:relative;z-index:2;width:100%;height:100%;display:block;object-fit:contain;
+  pointer-events:none;user-select:none;filter:drop-shadow(0 6px 10px var(--moto-shadow))}
+[data-theme="dark"] .moto-bike{
+  filter:drop-shadow(0 0 1px rgba(255,255,255,.16)) drop-shadow(0 6px 12px rgba(0,0,0,.78))}
+.moto-beam{position:absolute;z-index:1;left:86%;top:24%;width:58px;height:36px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(224,242,254,.42),rgba(224,242,254,0));
+  clip-path:polygon(0 28%,100% 0,100% 100%,0 48%);opacity:.65}
+[data-theme="light"] .moto-beam{opacity:.38}
+.moto-streaks{position:absolute;z-index:1;left:-32px;top:30px;width:44px;height:66px;pointer-events:none;overflow:visible}
+.moto-shadow{position:absolute;bottom:-3px;left:14%;width:72%;height:10px;border-radius:50%;
   background:radial-gradient(ellipse at center,var(--moto-shadow) 0%,transparent 72%);opacity:.9}
-.moto-spin{transform-box:fill-box;transform-origin:center}
+.moto-spin{transform-origin:center}
 .moto-streak{opacity:.45}
 .moto-controls{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10.5px;color:var(--faint);letter-spacing:.08em}
 .moto-badge{padding:3px 9px;border-radius:999px;border:1px solid var(--border);background:var(--surface)}
@@ -432,211 +443,17 @@ footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
       <div class="moto">
         <div class="moto-shadow"></div>
         <div class="moto-chassis">
-          <svg class="moto-bike" viewBox="0 0 360 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="cbr-red" x1="0" y1="0" x2="0.2" y2="1">
-                <stop offset="0" stop-color="#ff493d"/>
-                <stop offset=".42" stop-color="#dc191b"/>
-                <stop offset="1" stop-color="#870a10"/>
-              </linearGradient>
-              <linearGradient id="cbr-red-dark" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#b91217"/>
-                <stop offset="1" stop-color="#62060b"/>
-              </linearGradient>
-              <linearGradient id="cbr-blue" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#2563eb"/>
-                <stop offset=".55" stop-color="#1740b5"/>
-                <stop offset="1" stop-color="#0d236b"/>
-              </linearGradient>
-              <linearGradient id="cbr-white" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#ffffff"/>
-                <stop offset="1" stop-color="#dce2ee"/>
-              </linearGradient>
-              <linearGradient id="cbr-ohlins" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#a87518"/>
-                <stop offset=".45" stop-color="#f7cb53"/>
-                <stop offset="1" stop-color="#9e6d14"/>
-              </linearGradient>
-              <linearGradient id="cbr-gold-rim" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#f2c962"/>
-                <stop offset=".5" stop-color="#c9932c"/>
-                <stop offset="1" stop-color="#7c5612"/>
-              </linearGradient>
-              <linearGradient id="cbr-titanium" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#eef2f6"/>
-                <stop offset=".5" stop-color="#aeb7c4"/>
-                <stop offset="1" stop-color="#5d6574"/>
-              </linearGradient>
-              <linearGradient id="cbr-frame" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#353b47"/>
-                <stop offset="1" stop-color="#161920"/>
-              </linearGradient>
-              <linearGradient id="cbr-screen" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#94a3b8" stop-opacity=".75"/>
-                <stop offset=".55" stop-color="#334155" stop-opacity=".55"/>
-                <stop offset="1" stop-color="#0f172a" stop-opacity=".82"/>
-              </linearGradient>
-              <linearGradient id="cbr-beam" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#e0f2fe" stop-opacity=".42"/>
-                <stop offset="1" stop-color="#e0f2fe" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-
-            <!-- Headlight illumination cone -->
-            <polygon points="297,62 358,52 358,108 292,72" fill="url(#cbr-beam)"/>
-
-            <!-- Aero slipstream streaks -->
+          <div class="moto-beam" aria-hidden="true"></div>
+          <svg class="moto-streaks" viewBox="0 0 44 66" fill="none" aria-hidden="true">
             <g stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round">
-              <path class="moto-streak" d="M12 44h28" style="animation-delay:0s"/>
-              <path class="moto-streak" d="M4 66h34" style="animation-delay:.15s"/>
-              <path class="moto-streak" d="M18 92h26" style="animation-delay:.28s"/>
+              <path class="moto-streak" d="M12 10h26" style="animation-delay:0s"/>
+              <path class="moto-streak" d="M4 32h32" style="animation-delay:.15s"/>
+              <path class="moto-streak" d="M16 54h24" style="animation-delay:.28s"/>
             </g>
-
-            <!-- Rear fender hugger & chain guard -->
-            <path d="M56 80C66 64 88 58 112 66L116 74C92 69 72 74 62 84Z" fill="#181b22"/>
-            <!-- Tail tidy plate bracket -->
-            <path d="M53 46L34 64L38 67L57 48Z" fill="#1b1f27"/>
-            <rect x="29" y="61" width="9" height="6" rx="1" transform="rotate(-35 29 61)" fill="#cbd5e1"/>
-
-            <!-- Upper & lower drive chain -->
-            <line x1="94" y1="92" x2="160" y2="95" stroke="#475569" stroke-width="2.1" stroke-dasharray="2.5 1.8"/>
-            <line x1="94" y1="117" x2="160" y2="108" stroke="#334155" stroke-width="2" stroke-dasharray="2.5 1.8"/>
-
-            <!-- Rear Wheel (center 94, 105; tire outer r=31, rim r=21.5) -->
-            <g>
-              <circle cx="94" cy="105" r="27" fill="none" stroke="#111318" stroke-width="9"/>
-              <circle cx="94" cy="105" r="31.2" fill="none" stroke="#2d3340" stroke-width=".9"/>
-              <circle cx="94" cy="105" r="22.8" fill="none" stroke="#dc191b" stroke-width=".9" opacity=".85"/>
-              <g transform="translate(94, 105)">
-                <g class="moto-spin">
-                  <circle cx="0" cy="0" r="21.2" fill="none" stroke="url(#cbr-gold-rim)" stroke-width="2.4"/>
-                  <!-- 5 split-Y SP forged spokes -->
-                  <path d="M-2.2 -3.5 L-5.5 -20 M2.2 -3.5 L5.5 -20
-                           M2.6 -3.1 L17.3 -11.6 M4.1 0.8 L20.6 -0.7
-                           M3.8 1.5 L15.6 13.7 M0.5 4.2 L5.9 20.1
-                           M-0.5 4.2 L-5.9 20.1 M-3.8 1.5 L-15.6 13.7
-                           M-4.1 0.8 L-20.6 -0.7 M-2.6 -3.1 L-17.3 -11.6"
-                        stroke="url(#cbr-gold-rim)" stroke-width="1.9" stroke-linecap="round"/>
-                  <!-- Rear sprocket & wave brake disc -->
-                  <circle cx="0" cy="0" r="11" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="4 1.8"/>
-                  <circle cx="0" cy="0" r="6" fill="#1e222b" stroke="#cbd5e1" stroke-width="1"/>
-                </g>
-              </g>
-              <circle cx="94" cy="105" r="3" fill="#e2e8f0"/>
-            </g>
-
-            <!-- Front Wheel (center 248, 105; tire outer r=31, rim r=21.5) -->
-            <g>
-              <circle cx="248" cy="105" r="27" fill="none" stroke="#111318" stroke-width="9"/>
-              <circle cx="248" cy="105" r="31.2" fill="none" stroke="#2d3340" stroke-width=".9"/>
-              <circle cx="248" cy="105" r="22.8" fill="none" stroke="#dc191b" stroke-width=".9" opacity=".85"/>
-              <g transform="translate(248, 105)">
-                <g class="moto-spin">
-                  <circle cx="0" cy="0" r="21.2" fill="none" stroke="url(#cbr-gold-rim)" stroke-width="2.4"/>
-                  <path d="M-2.2 -3.5 L-5.5 -20 M2.2 -3.5 L5.5 -20
-                           M2.6 -3.1 L17.3 -11.6 M4.1 0.8 L20.6 -0.7
-                           M3.8 1.5 L15.6 13.7 M0.5 4.2 L5.9 20.1
-                           M-0.5 4.2 L-5.9 20.1 M-3.8 1.5 L-15.6 13.7
-                           M-4.1 0.8 L-20.6 -0.7 M-2.6 -3.1 L-17.3 -11.6"
-                        stroke="url(#cbr-gold-rim)" stroke-width="1.9" stroke-linecap="round"/>
-                  <!-- Front 330mm floating drilled brake rotor -->
-                  <circle cx="0" cy="0" r="15.2" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="6.5 1.5"/>
-                  <circle cx="0" cy="0" r="10.2" fill="none" stroke="#9ca3af" stroke-width="1.2"/>
-                  <circle cx="0" cy="0" r="6.5" fill="#1e222b" stroke="url(#cbr-gold-rim)" stroke-width="1.1"/>
-                </g>
-              </g>
-              <!-- Stationary radial Brembo Stylema front brake caliper -->
-              <path d="M233 96L238 94L241 112L234 114C231 108 231 101 233 96Z" fill="#a88446" stroke="#332813" stroke-width=".8"/>
-            </g>
-
-            <!-- Gullwing cast-aluminum rear swingarm -->
-            <path d="M150 86C136 86 116 95 92 101L94 109C118 106 138 103 153 96Z" fill="url(#cbr-frame)" stroke="#475569" stroke-width=".6"/>
-            <circle cx="94" cy="105" r="3.2" fill="#e2e8f0" stroke="#1e293b" stroke-width=".9"/>
-
-            <!-- Exhaust header collector + upswept Akrapovič Titanium canister -->
-            <path d="M196 111C186 123 162 125 144 117L130 105" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
-            <path d="M134 108L125 101" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" opacity=".7"/>
-            <path d="M128 100L76 69L70 77L121 108Z" fill="url(#cbr-titanium)" stroke="#475569" stroke-width=".7" stroke-linejoin="round"/>
-            <!-- Carbon end-cap -->
-            <path d="M76 69L66 67L63 75L70 77Z" fill="#181b22" stroke="#334155" stroke-width=".6"/>
-            <line x1="122" y1="100" x2="77" y2="73" stroke="#ffffff" stroke-width="1.1" opacity=".55" stroke-linecap="round"/>
-
-            <!-- Öhlins TTX rear shock peek & aluminum subframe -->
-            <line x1="138" y1="68" x2="144" y2="90" stroke="#eab308" stroke-width="4.5" stroke-linecap="round"/>
-            <path d="M148 64L114 59L68 42" fill="none" stroke="#2d3340" stroke-width="2.6" stroke-linecap="round"/>
-
-            <!-- Engine crankcase, clutch cover & radiator -->
-            <path d="M155 72H206V110H155Z" fill="#161922"/>
-            <circle cx="180" cy="97" r="11.5" fill="#272b35" stroke="#5b4d34" stroke-width="1.6"/>
-            <circle cx="180" cy="97" r="5" fill="#3a3326"/>
-            <path d="M210 68L220 71L214 103L204 100Z" fill="#1e2430"/>
-
-            <!-- Twin-spar diamond aluminum frame -->
-            <path d="M148 88C152 66 168 54 198 46L215 41L218 52C196 58 176 70 162 94Z" fill="url(#cbr-frame)" stroke="#4b5563" stroke-width=".7"/>
-            <!-- Rearset rider footpeg & heel guard -->
-            <path d="M144 92L133 102L138 104L149 95Z" fill="#cbd5e1"/>
-            <circle cx="135" cy="103" r="2.2" fill="#e2e8f0"/>
-
-            <!-- Sculpted HRC Fuel Tank -->
-            <path d="M146 55C153 41 171 32 194 33C206 34 214 38 219 45L204 54C187 58 164 59 146 55Z" fill="url(#cbr-red)" stroke="#70090e" stroke-width=".6"/>
-            <path d="M161 46C174 39 194 37 211 42L206 47C192 44 176 46 164 51Z" fill="url(#cbr-white)"/>
-            <path d="M166 50C179 45 196 44 209 47L205 51C193 49 179 51 169 54Z" fill="url(#cbr-blue)"/>
-
-            <!-- Scooped Alcantara Rider Saddle & Hollow Aero Tail -->
-            <path d="M114 60C125 60 137 56 146 55C148 59 138 63 116 64Z" fill="#15171e"/>
-            <path d="M44 37L55 33L116 57L112 65L60 48L44 41Z" fill="url(#cbr-red)" stroke="#70090e" stroke-width=".5" stroke-linejoin="round"/>
-            <path d="M59 37L105 55L101 59L54 41Z" fill="url(#cbr-white)"/>
-            <path d="M55 40L97 56L93 59L51 43Z" fill="url(#cbr-blue)"/>
-            <!-- Glowing LED tail light -->
-            <path d="M43 37L48 39L47 42L42 40Z" fill="#ff2a3c"/>
-
-            <!-- Main SC82 Nose Cowl, Side Fairing & Belly Pan (strictly clear of front tire) -->
-            <path d="M196 112L158 111L152 102L185 88C199 76 212 58 224 46C235 45 258 48 281 56L300 63L287 69L254 67C238 67 224 72 216 84L210 112L196 121L155 117Z"
-                  fill="url(#cbr-red)" stroke="#6e080d" stroke-width=".6" stroke-linejoin="round"/>
-
-            <!-- HRC Tricolor Mid Fairing Sweep (Ross Blue & Pearl White, clear of front wheel) -->
-            <path d="M204 68C214 60 232 58 250 61L226 73L215 88L211 103L192 103C196 89 200 77 204 68Z" fill="url(#cbr-blue)"/>
-            <path d="M205 66C216 60 234 59 252 62L244 67C228 64 214 66 202 72Z" fill="url(#cbr-white)"/>
-            <path d="M199 88L216 83L213 92L194 96Z" fill="url(#cbr-white)" opacity=".96"/>
-
-            <!-- Radiator hot-air extraction gills -->
-            <path d="M188 79L204 76L201 81L185 84Z" fill="#11131a"/>
-            <path d="M185 86L201 83L198 88L182 91Z" fill="#11131a"/>
-
-            <!-- Deep Red Belly Pan + HONDA Livery -->
-            <path d="M155 116L174 106L211 106L208 117L174 121Z" fill="url(#cbr-red-dark)"/>
-            <text x="169" y="116.5" font-family="Arial, Helvetica, sans-serif" font-size="6.1" font-weight="800" fill="#f8fafc" letter-spacing=".7">HONDA</text>
-
-            <!-- Front Carbon/Red Fender -->
-            <path d="M222 83C232 69 258 67 271 81L261 84C250 76 237 77 227 87Z" fill="url(#cbr-red)" stroke="#62060b" stroke-width=".5"/>
-            <path d="M222 83C226 78 231 75 236 74L235 80C230 81 226 84 224 87Z" fill="#181b22"/>
-
-            <!-- Öhlins NPX USD Front Forks (emerging under cowl down to axle 248,105) -->
-            <line x1="215" y1="36" x2="233" y2="75" stroke="url(#cbr-ohlins)" stroke-width="6.8" stroke-linecap="round"/>
-            <line x1="214" y1="38" x2="231" y2="74" stroke="#fef08a" stroke-width="1.3" opacity=".7" stroke-linecap="round"/>
-            <line x1="233" y1="75" x2="248" y2="105" stroke="#cbd5e1" stroke-width="4.2" stroke-linecap="round"/>
-            <circle cx="248" cy="105" r="3.4" fill="#1e293b" stroke="#e2e8f0" stroke-width=".9"/>
-
-            <!-- Clip-on handlebar, grip & lever -->
-            <path d="M214 35L199 41" stroke="#181b22" stroke-width="4" stroke-linecap="round"/>
-            <path d="M206 39L219 42" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"/>
-
-            <!-- Carbon-Fiber Tri-Blade MotoGP Aero Winglet -->
-            <path d="M244 61L275 63L271 71L239 69Z" fill="#141821" stroke="#475569" stroke-width=".7" stroke-linejoin="round"/>
-            <line x1="244" y1="63.5" x2="272" y2="65.5" stroke="#64748b" stroke-width=".7"/>
-            <line x1="242" y1="66.5" x2="270" y2="68.5" stroke="#64748b" stroke-width=".7"/>
-
-            <!-- Double-Bubble Smoked Windscreen & Mirror -->
-            <path d="M220 33C236 25 259 30 278 51L264 52C250 40 234 36 220 38Z"
-                  fill="url(#cbr-screen)" stroke="rgba(255,255,255,.45)" stroke-width=".7"/>
-            <path d="M261 44L253 28" stroke="#181b22" stroke-width="2" stroke-linecap="round"/>
-            <ellipse cx="251" cy="27" rx="5.5" ry="2.2" transform="rotate(-14 251 27)" fill="#181b22" stroke="#475569" stroke-width=".6"/>
-
-            <!-- Slanted SC82 LED Headlight & Central Ram-Air Duct -->
-            <path d="M277 56L297 62L284 65Z" fill="#0f172a"/>
-            <path d="M278 57L296 62.2" stroke="#f0f9ff" stroke-width="2.1" stroke-linecap="round"/>
-            <path d="M289 63L299 63.5L293 68L285 66.5Z" fill="#0b0f17"/>
           </svg>
+          <img class="moto-wheel moto-wheel-rear moto-spin" src="assets/cbr1000rr-wheel-rear.png" width="90" height="90" alt="" aria-hidden="true" decoding="async">
+          <img class="moto-wheel moto-wheel-front moto-spin" src="assets/cbr1000rr-wheel-front.png" width="90" height="90" alt="" aria-hidden="true" decoding="async">
+          <img class="moto-bike" src="assets/cbr1000rr-body.png" width="448" height="242" alt="Honda CBR1000RR-R Fireblade SP" fetchpriority="high" decoding="async">
         </div>
       </div>
     </div>
@@ -675,7 +492,7 @@ footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
     </span>
     <span class="chip">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-      <span id="projectCount">6</span>&nbsp;public projects
+      <span id="projectCount">7</span>&nbsp;public projects
     </span>
     <span class="chip">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
@@ -803,12 +620,28 @@ footer{border-top:1px solid var(--border);margin-top:40px;position:relative}
       </div>
     </a>
 
-    <a class="card private reveal" href="https://life.mihaitinca.com/" target="_blank" rel="noopener" style="--g1:#6366f1;--g2:#4338ca;transition-delay:.54s">
+    <a class="card reveal" href="trend-desk/" style="--g1:#2563eb;--g2:#10b981;transition-delay:.54s">
+      <div class="card-top">
+        <div class="icon-tile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <span class="card-num">07</span>
+      </div>
+      <h3>Trend Desk</h3>
+      <p class="desc">Closed-loop autonomous momentum and downside-control showcase benchmarked over 10 years against the Nasdaq-100, with interactive equity replay and mandate simulator.</p>
+      <div class="tags"><span class="tag">Quant</span><span class="tag">Momentum</span><span class="tag">Simulator</span><span class="tag">Autonomous</span></div>
+      <div class="card-foot">
+        <span class="badge"><span class="dot"></span>LIVE · v5.4</span>
+        <span class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg></span>
+      </div>
+    </a>
+
+    <a class="card private reveal" href="https://life.mihaitinca.com/" target="_blank" rel="noopener" style="--g1:#6366f1;--g2:#4338ca;transition-delay:.63s">
       <div class="card-top">
         <div class="icon-tile">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 14.5v2.5"/></svg>
         </div>
-        <span class="card-num">07</span>
+        <span class="card-num">08</span>
       </div>
       <h3>Private Lab</h3>
       <p class="desc">Authenticated experiments and production builds hosted securely behind sign-in at life.mihaitinca.com.</p>
@@ -920,8 +753,8 @@ const SITE_CONFIG = {
    'https://formspree.io/f/xyzabc' or 'https://api.web3forms.com/submit' */
 const FORM_ENDPOINT = '';
 
-const ROTATOR_WORDS = ['world-clock','srl-launchpad-2026','micro-saas-research','ai-invoice-os','amtis-telemetry','project-meridian','something new…'];
-const PROJECT_COUNT = 6; /* 6 public projects + Private Lab portal */
+const ROTATOR_WORDS = ['world-clock','srl-launchpad-2026','micro-saas-research','ai-invoice-os','amtis-telemetry','project-meridian','trend-desk','something new…'];
+const PROJECT_COUNT = 7; /* 7 public projects + Private Lab portal */
 
 /* ── Wire every mailto / github link from config ── */
 const mailSubject = encodeURIComponent('Hello from ' + SITE_CONFIG.site);
