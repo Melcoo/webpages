@@ -1,163 +1,1842 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>World Clock — MTI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    try {
+      var savedTheme = localStorage.getItem('mt-theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        document.querySelector('meta[name="color-scheme"]').content = savedTheme;
+      }
+    } catch (err) { /* ignore storage blocks */ }
+  </script>
+  <title>World Clock — Mihai Tinca</title>
+  <meta name="description" content="Animated global time dashboard across 25 major cities with real-time daylight phases, analog dials, and 3D flip animated landmark scenes.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230ea5e9'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ffffff' stroke-width='7'/><path d='M50 30v22l14 9' fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/space-grotesk@latest/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/jetbrains-mono@latest/index.css">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
+      color-scheme: light dark;
+      --bg: #f4f5fb;
+      --bg: light-dark(#f4f5fb, #070811);
+      --text: #15172b;
+      --text: light-dark(#15172b, #eef1fb);
+      --muted: #525674;
+      --muted: light-dark(#525674, #9ca3c4);
+      --faint: #777b99;
+      --faint: light-dark(#777b99, #6e7596);
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface: light-dark(rgba(255, 255, 255, 0.78), rgba(18, 22, 38, 0.72));
+      --surface-strong: rgba(255, 255, 255, 0.94);
+      --surface-strong: light-dark(rgba(255, 255, 255, 0.94), rgba(24, 29, 50, 0.92));
+      --border: rgba(21, 23, 43, 0.11);
+      --border: light-dark(rgba(21, 23, 43, 0.11), rgba(255, 255, 255, 0.11));
+      --border-strong: rgba(21, 23, 43, 0.22);
+      --border-strong: light-dark(rgba(21, 23, 43, 0.22), rgba(255, 255, 255, 0.22));
+      --glass: rgba(244, 245, 251, 0.82);
+      --glass: light-dark(rgba(244, 245, 251, 0.82), rgba(7, 8, 17, 0.78));
+      --accent: #0284c7;
+      --accent: light-dark(#0284c7, #38bdf8);
+      --accent-2: #6d5cff;
+      --accent-2: light-dark(#6d5cff, #8b7bff);
+      --mint: #059669;
+      --mint: light-dark(#059669, #34d399);
+      --shadow-card: 0 20px 44px -22px rgba(15, 23, 42, 0.24);
+      --shadow-card: light-dark(0 20px 44px -22px rgba(15, 23, 42, 0.22), 0 24px 54px -22px rgba(0, 0, 0, 0.75));
+      --grid-line: rgba(21, 23, 43, 0.045);
+      --grid-line: light-dark(rgba(21, 23, 43, 0.045), rgba(255, 255, 255, 0.04));
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+      --flip-spring: linear(
+        0, 0.014 1.2%, 0.056 2.5%, 0.21 5.6%, 0.59 12.2%, 0.90 19.2%,
+        1.055 25.8%, 1.078 30.2%, 1.058 35.4%, 1.006 44.5%, 0.992 52.5%,
+        0.999 66.5%, 1.001 82.5%, 1
+      );
+      &:has(> head > meta[name="color-scheme"][content="dark"]) {
+        color-scheme: dark;
+      }
+      &:has(> head > meta[name="color-scheme"][content="light"]) {
+        color-scheme: light;
+      }
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
+      font-family: var(--font-body);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* ── Atmospheric Backdrop ─────────────────────────── */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .backdrop-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 95% 75% at 50% 0%, #000 35%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 95% 75% at 50% 0%, #000 35%, transparent 100%);
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      opacity: 0.25;
+      opacity: light-dark(0.24, 0.36);
+    }
+    .blob-1 { width: 520px; height: 520px; background: #38bdf8; top: -180px; left: -120px; }
+    .blob-2 { width: 460px; height: 460px; background: #7c3aed; top: 8%; right: -160px; }
+    .blob-3 { width: 420px; height: 420px; background: #10b981; bottom: -180px; left: 32%; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .blob-1 { animation: blob-drift 22s ease-in-out infinite alternate; }
+      .blob-2 { animation: blob-drift 26s ease-in-out -8s infinite alternate-reverse; }
+    }
+    @keyframes blob-drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(42px, 28px) scale(1.08); }
+    }
+
+    /* ── Top Navigation ───────────────────────────────── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: var(--glass);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: 13px clamp(16px, 3vw, 32px);
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .back-btn:hover { border-color: var(--accent); transform: translateX(-2px); }
+    .back-btn svg { width: 15px; height: 15px; }
+
+    .top-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.98rem;
+      letter-spacing: -0.02em;
+    }
+    .top-brand-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 12px var(--mint);
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-pill-btn {
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .icon-pill-btn:hover { color: var(--text); border-color: var(--accent); }
+    .icon-pill-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .icon-pill-btn:focus-visible,
+    .back-btn:focus-visible,
+    .filter-tab:focus-visible,
+    .control-input:focus-visible,
+    .control-select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Pure CSS color-scheme branch for theme button icon (no JS needed to stay accurate) */
+    .theme-opt-dark { display: inline-flex; align-items: center; gap: 6px; }
+    .theme-opt-light { display: none; align-items: center; gap: 6px; }
+    @media (prefers-color-scheme: dark) {
+      :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-opt-dark { display: none; }
+      :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-opt-light { display: inline-flex; }
+    }
+    :root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-opt-dark { display: none; }
+    :root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-opt-light { display: inline-flex; }
+    :root:has(> head > meta[name="color-scheme"][content="light"]) .theme-opt-dark { display: inline-flex; }
+    :root:has(> head > meta[name="color-scheme"][content="light"]) .theme-opt-light { display: none; }
+
+    /* ── Main Container & Hero ────────────────────────── */
+    .wrap {
+      max-width: 1260px;
+      margin: 0 auto;
+      padding: clamp(24px, 4vw, 44px) clamp(16px, 3vw, 32px) 64px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.95fr;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; align-items: start; }
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .kicker::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
     }
     h1 {
-      font-size: 1.75rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      color: var(--accent);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2rem, 4.4vw, 3.3rem);
+      letter-spacing: -0.03em;
+      line-height: 1.06;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      width: 100%;
-      max-width: 1100px;
+    .grad-accent {
+      background: linear-gradient(120deg, var(--accent-2), var(--accent), var(--mint));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    .hero-sub {
+      margin-top: 10px;
+      max-width: 56ch;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .telemetry-panel {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 12px;
     }
-    .city {
-      font-weight: 600;
-      font-size: 1.05rem;
+    .telemetry-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .time {
-      font-size: 1.6rem;
+    .local-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .local-time {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 700;
       font-variant-numeric: tabular-nums;
-      letter-spacing: 0.5px;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
     }
-    .date {
+    .utc-readout {
+      font-family: var(--font-mono);
+      font-size: 12px;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
     }
-    .footer {
-      margin-top: 2rem;
+    .solar-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
       color: var(--muted);
-      font-size: 0.85rem;
+    }
+
+    /* Solar 24h Ribbon */
+    .solar-ribbon {
+      position: relative;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: linear-gradient(90deg,
+        #0b1124 0%,
+        #16224a 18%,
+        #f59e0b 27%,
+        #38bdf8 38%,
+        #7dd3fc 52%,
+        #38bdf8 66%,
+        #f97316 77%,
+        #4c1d95 86%,
+        #0b1124 100%);
+      overflow: visible;
+    }
+    .solar-dot {
+      position: absolute;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      border: 1.5px solid #0f172a;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .solar-dot:hover {
+      transform: translate(-50%, -50%) scale(1.6);
+      z-index: 4;
+    }
+    .solar-scale {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--faint);
+      margin-top: 2px;
+    }
+
+    /* ── Toolbar Controls ─────────────────────────────── */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin-bottom: 24px;
+    }
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .filter-tab {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .filter-tab:hover { color: var(--text); border-color: var(--border-strong); }
+    .filter-tab.active {
+      background: var(--text);
+      color: var(--bg);
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .controls-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .search-wrap {
+      position: relative;
+      min-width: 220px;
+      flex: 1 1 240px;
+      max-width: 320px;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      color: var(--faint);
+      pointer-events: none;
+    }
+    .control-input {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-strong);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+    }
+    .control-select {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-strong);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
+    /* ── Clocks Grid & 3D Flip Tiles ──────────────────── */
+    .clocks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(276px, 1fr));
+      gap: 20px;
+    }
+    .empty-state {
+      grid-column: 1 / -1;
       text-align: center;
-    }
-    .back-link {
-      margin-top: 1.2rem;
-      color: var(--accent);
-      text-decoration: none;
+      padding: 56px 20px;
+      border: 1px dashed var(--border-strong);
+      border-radius: 22px;
+      color: var(--muted);
+      font-family: var(--font-mono);
       font-size: 0.9rem;
     }
+
+    /* Stationary outer tile owns perspective + hover target (prevents 3D flip edge jitter) */
+    .clock-tile {
+      position: relative;
+      height: 232px;
+      perspective: 1200px;
+      container-type: inline-size;
+      border-radius: 22px;
+      transition: transform 0.25s ease;
+    }
+    .clock-tile[hidden] { display: none; }
+    .clock-tile.pulse-highlight {
+      box-shadow: 0 0 0 3px var(--accent);
+    }
+
+    /* Phase themes driving BOTH front accent & back dynamic sky */
+    .clock-tile[data-phase="dawn"] {
+      --phase-color: #f59e0b;
+      --phase-tint: rgba(245, 158, 11, 0.14);
+      --sky-top: #1e2959;
+      --sky-mid: #c25975;
+      --sky-horizon: #fbbf77;
+      --star-opacity: 0.28;
+      --sun-opacity: 0.9;
+      --moon-opacity: 0;
+      --city-glow: 0.65;
+    }
+    .clock-tile[data-phase="day"] {
+      --phase-color: #0ea5e9;
+      --phase-tint: rgba(14, 165, 233, 0.13);
+      --sky-top: #0c4a8a;
+      --sky-mid: #38a3e8;
+      --sky-horizon: #bae6fd;
+      --star-opacity: 0;
+      --sun-opacity: 1;
+      --moon-opacity: 0;
+      --city-glow: 0.12;
+    }
+    .clock-tile[data-phase="dusk"] {
+      --phase-color: #f97316;
+      --phase-tint: rgba(249, 115, 22, 0.15);
+      --sky-top: #1c1642;
+      --sky-mid: #9d3877;
+      --sky-horizon: #fb923c;
+      --star-opacity: 0.45;
+      --sun-opacity: 0.85;
+      --moon-opacity: 0;
+      --city-glow: 0.78;
+    }
+    .clock-tile[data-phase="night"] {
+      --phase-color: #818cf8;
+      --phase-tint: rgba(129, 140, 248, 0.16);
+      --sky-top: #050816;
+      --sky-mid: #111b3b;
+      --sky-horizon: #1e2b58;
+      --star-opacity: 0.95;
+      --sun-opacity: 0;
+      --moon-opacity: 0.95;
+      --city-glow: 1;
+    }
+
+    .clock-flipper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      /* Standard fallback before physics-based linear() timing */
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      transition-timing-function: var(--flip-spring);
+    }
+
+    @media (hover: hover) {
+      .clock-tile:hover .clock-flipper {
+        transform: rotateY(180deg);
+      }
+    }
+    .clock-tile.is-flipped .clock-flipper,
+    .clock-tile:has(.tile-flip-btn:focus-visible) .clock-flipper {
+      transform: rotateY(180deg);
+    }
+    .clock-tile:has(.tile-flip-btn:focus-visible) {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .clock-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-card);
+    }
+
+    /* ── Front Face ───────────────────────────────────── */
+    .clock-face--front {
+      background:
+        radial-gradient(280px 140px at 90% 0%, var(--phase-tint), transparent 65%),
+        var(--surface-strong);
+      padding: 18px 18px 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .city-meta { min-width: 0; }
+    .city-name {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .country-name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+    .analog-dial {
+      width: 54px;
+      height: 54px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px;
+    }
+    .analog-dial svg { width: 100%; height: 100%; display: block; }
+    .dial-ticks { stroke: var(--faint); stroke-width: 1.3; stroke-linecap: round; opacity: 0.65; }
+    .hand-hour { stroke: var(--text); stroke-width: 2.5; stroke-linecap: round; }
+    .hand-min { stroke: var(--text); stroke-width: 1.8; stroke-linecap: round; }
+    .hand-sec { stroke: var(--phase-color); stroke-width: 1.2; stroke-linecap: round; }
+
+    .time-block {
+      margin: 4px 0;
+    }
+    .digital-time {
+      font-family: var(--font-display);
+      font-size: clamp(1.95rem, 11cqi, 2.35rem);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .ampm {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .local-date {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .phase-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--phase-tint);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .phase-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--phase-color);
+      box-shadow: 0 0 8px var(--phase-color);
+    }
+    .delta-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+    }
+    .tile-flip-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 6px;
+    }
+    .tile-flip-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+    }
+    .tile-flip-btn:focus-visible { outline: none; }
+
+    /* ── Back Face (Animated City Scene) ──────────────── */
+    .clock-face--back {
+      transform: rotateY(180deg);
+      background: #070b1a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .scene-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .back-scrim {
+      position: relative;
+      z-index: 2;
+      padding: 28px 18px 14px;
+      background: linear-gradient(to top,
+        rgba(4, 7, 16, 0.94) 0%,
+        rgba(4, 7, 16, 0.72) 56%,
+        rgba(4, 7, 16, 0) 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .back-city {
+      font-family: var(--font-display);
+      font-size: 1.12rem;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #ffffff;
+    }
+    .back-landmark {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+    .back-time-box {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .back-time {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #7dd3fc;
+      line-height: 1.1;
+    }
+    .back-offset {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+
+    /* ── City SVG Animations (Compositor-Only + Play Only When Flipped) ── */
+    .scene-sky-stars { opacity: var(--star-opacity); transition: opacity 0.6s ease; }
+    .scene-sun { opacity: var(--sun-opacity); transition: opacity 0.6s ease; }
+    .scene-moon { opacity: var(--moon-opacity); transition: opacity 0.6s ease; }
+    .scene-glow { opacity: var(--city-glow); transition: opacity 0.6s ease; }
+
+    .scene-anim { transform-box: fill-box; transform-origin: center; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .anim-ferris { animation: scene-spin 16s linear infinite; }
+      .anim-glide-x { animation: scene-glide 7.5s linear infinite; }
+      .anim-glide-rev { animation: scene-glide-rev 8.5s linear infinite; }
+      .anim-glide-fast { animation: scene-glide-fast 4.2s cubic-bezier(.45,.05,.55,.95) infinite; }
+      .anim-bob { animation: scene-bob 3.2s ease-in-out infinite alternate; }
+      .anim-sway { transform-origin: bottom center; animation: scene-sway 4.4s ease-in-out infinite alternate; }
+      .anim-beam { transform-origin: bottom center; animation: scene-beam 4.8s ease-in-out infinite alternate; }
+      .anim-beam-rev { transform-origin: bottom center; animation: scene-beam-rev 5.4s ease-in-out infinite alternate; }
+      .anim-sparkle { animation: scene-pulse 2.2s ease-in-out infinite alternate; }
+      .anim-beacon { animation: scene-beacon 2.4s ease-in-out infinite; }
+      .anim-fountain { transform-origin: bottom center; animation: scene-fountain 2.6s ease-in-out infinite alternate; }
+      .anim-snow { animation: scene-fall 5.5s linear infinite; }
+      .anim-petal { animation: scene-petal 6s linear infinite; }
+      .anim-lantern { animation: scene-rise 6.5s linear infinite; }
+      .anim-shimmer { animation: scene-shimmer 3.2s ease-in-out infinite alternate; }
+      .anim-cloud { animation: scene-cloud 16s linear infinite; }
+    }
+
+    /* Save GPU/CPU when cards are showing front face or global pause is active */
+    .clock-tile:not(:hover):not(.is-flipped):not(:has(.tile-flip-btn:focus-visible)) .scene-anim,
+    :root[data-animations="paused"] .scene-anim,
+    :root[data-animations="paused"] .blob {
+      animation-play-state: paused !important;
+    }
+
+    @keyframes scene-spin { to { transform: rotate(360deg); } }
+    @keyframes scene-glide {
+      from { transform: translateX(-70px); }
+      to { transform: translateX(390px); }
+    }
+    @keyframes scene-glide-rev {
+      from { transform: translateX(390px); }
+      to { transform: translateX(-70px); }
+    }
+    @keyframes scene-glide-fast {
+      0% { transform: translateX(-110px); }
+      55%, 100% { transform: translateX(420px); }
+    }
+    @keyframes scene-bob {
+      from { transform: translateY(0px); }
+      to { transform: translateY(-4px); }
+    }
+    @keyframes scene-sway {
+      from { transform: rotate(-3.5deg); }
+      to { transform: rotate(3.5deg); }
+    }
+    @keyframes scene-beam {
+      from { transform: rotate(-16deg); opacity: 0.4; }
+      to { transform: rotate(18deg); opacity: 0.78; }
+    }
+    @keyframes scene-beam-rev {
+      from { transform: rotate(15deg); opacity: 0.7; }
+      to { transform: rotate(-17deg); opacity: 0.35; }
+    }
+    @keyframes scene-pulse {
+      from { opacity: 0.25; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1.08); }
+    }
+    @keyframes scene-beacon {
+      0%, 100% { opacity: 0.35; transform: scale(0.88); }
+      50% { opacity: 1; transform: scale(1.22); }
+    }
+    @keyframes scene-fountain {
+      from { transform: scaleY(0.58); opacity: 0.55; }
+      to { transform: scaleY(1.06); opacity: 0.96; }
+    }
+    @keyframes scene-fall {
+      0% { transform: translateY(-16px) translateX(0); opacity: 0; }
+      15% { opacity: 0.9; }
+      85% { opacity: 0.9; }
+      100% { transform: translateY(210px) translateX(18px); opacity: 0; }
+    }
+    @keyframes scene-petal {
+      0% { transform: translate(0, -14px) rotate(0deg); opacity: 0; }
+      15% { opacity: 0.9; }
+      85% { opacity: 0.9; }
+      100% { transform: translate(54px, 195px) rotate(240deg); opacity: 0; }
+    }
+    @keyframes scene-rise {
+      0% { transform: translateY(20px) scale(0.85); opacity: 0; }
+      20% { opacity: 0.95; }
+      85% { opacity: 0.85; }
+      100% { transform: translateY(-150px) scale(1.05); opacity: 0; }
+    }
+    @keyframes scene-shimmer {
+      from { transform: translateX(-6px); opacity: 0.45; }
+      to { transform: translateX(8px); opacity: 0.92; }
+    }
+    @keyframes scene-cloud {
+      from { transform: translateX(-30px); }
+      to { transform: translateX(35px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .clock-flipper {
+        transform: none !important;
+        transition: none !important;
+      }
+      .clock-face--back {
+        transform: none;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .clock-tile:hover .clock-face--back,
+      .clock-tile.is-flipped .clock-face--back,
+      .clock-tile:has(.tile-flip-btn:focus-visible) .clock-face--back {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .scene-anim { animation: none !important; }
+    }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .page-footer {
+      margin-top: 38px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--faint);
+    }
+    .page-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .page-footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <h1>World Clock</h1>
-  <div class="grid" id="clocks"></div>
-  <div class="footer">Updates every second • Local browser time</div>
-  <a class="back-link" href="../">← Back to projects</a>
+  <div class="backdrop" aria-hidden="true">
+    <div class="backdrop-grid"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav class="topbar" aria-label="Primary navigation">
+    <div class="topbar-inner">
+      <a class="back-btn" href="../">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        Back to projects
+      </a>
+      <div class="top-brand">
+        <span class="top-brand-dot" aria-hidden="true"></span>
+        <span>World Clock · 25 Cities</span>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="icon-pill-btn" id="animToggle" aria-label="Pause scene animations">
+          <svg id="animIconPause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <svg id="animIconPlay" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:none"><path d="M7 5v14l11-7z"/></svg>
+          <span id="animLabel">Pause scenes</span>
+        </button>
+        <button type="button" class="icon-pill-btn" id="themeToggle" aria-label="Switch color theme">
+          <span class="theme-opt-dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+            Dark
+          </span>
+          <span class="theme-opt-light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+            Light
+          </span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <div class="kicker">Live Global Dashboard</div>
+        <h1>Every timezone,<br><span class="grad-accent">alive in motion.</span></h1>
+        <p class="hero-sub">Real-time clocks across 25 major cities with live solar day/night sky states and analog dials. Hover or tap any tile to flip into its animated city scene.</p>
+      </div>
+      <section class="telemetry-panel" aria-label="Local and solar telemetry">
+        <div class="telemetry-top">
+          <div>
+            <div class="local-label" id="localZoneLabel">Your local time</div>
+            <div class="local-time" id="localClock">--:--:--</div>
+          </div>
+          <div class="utc-readout" id="utcClock">UTC --:--:--</div>
+        </div>
+        <div class="solar-ribbon" id="solarRibbon" aria-label="24-hour distribution of cities"></div>
+        <div class="solar-scale" aria-hidden="true">
+          <span>00:00</span><span>06:00 Dawn</span><span>12:00 Noon</span><span>18:00 Dusk</span><span>24:00</span>
+        </div>
+        <div class="solar-stats">
+          <span id="daylightCount">-- in daylight · -- in night</span>
+          <span id="visibleCount">25 cities shown</span>
+        </div>
+      </section>
+    </header>
+
+    <section class="controls-bar" aria-label="Clock filters and display options">
+      <div class="filter-tabs" role="tablist" aria-label="Filter cities by region" id="regionTabs">
+        <button type="button" class="filter-tab active" role="tab" aria-selected="true" data-region="all">All (25)</button>
+        <button type="button" class="filter-tab" role="tab" aria-selected="false" data-region="europe">Europe</button>
+        <button type="button" class="filter-tab" role="tab" aria-selected="false" data-region="americas">Americas</button>
+        <button type="button" class="filter-tab" role="tab" aria-selected="false" data-region="asia-pacific">Asia-Pacific</button>
+        <button type="button" class="filter-tab" role="tab" aria-selected="false" data-region="mea">Middle East &amp; Africa</button>
+      </div>
+      <div class="controls-right">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" class="control-input" id="citySearch" placeholder="Filter city or landmark… (/)" aria-label="Filter cities by name, country, or landmark">
+        </div>
+        <select class="control-select" id="sortSelect" aria-label="Sort cities">
+          <option value="featured">Sort: Featured</option>
+          <option value="east-west">Sort: East → West</option>
+          <option value="west-east">Sort: West → East</option>
+          <option value="az">Sort: A → Z</option>
+        </select>
+        <button type="button" class="icon-pill-btn" id="formatToggle" aria-label="Switch between 24-hour and 12-hour format">24H</button>
+      </div>
+    </section>
+
+    <section class="clocks-grid" id="clocksGrid" aria-live="off"></section>
+
+    <footer class="page-footer">
+      <span>Updates every second via native browser Intl APIs · Hover or click any card to flip</span>
+      <a href="../">← Return to Mihai Tinca portal</a>
+    </footer>
+  </main>
 
   <script>
-    const cities = [
-      { city: "New York", zone: "America/New_York" },
-      { city: "Los Angeles", zone: "America/Los_Angeles" },
-      { city: "Chicago", zone: "America/Chicago" },
-      { city: "London", zone: "Europe/London" },
-      { city: "Paris", zone: "Europe/Paris" },
-      { city: "Berlin", zone: "Europe/Berlin" },
-      { city: "Madrid", zone: "Europe/Madrid" },
-      { city: "Rome", zone: "Europe/Rome" },
-      { city: "Bucharest", zone: "Europe/Bucharest" },
-      { city: "Moscow", zone: "Europe/Moscow" },
-      { city: "Dubai", zone: "Asia/Dubai" },
-      { city: "Mumbai", zone: "Asia/Kolkata" },
-      { city: "Singapore", zone: "Asia/Singapore" },
-      { city: "Tokyo", zone: "Asia/Tokyo" },
-      { city: "Seoul", zone: "Asia/Seoul" },
-      { city: "Sydney", zone: "Australia/Sydney" },
-      { city: "Auckland", zone: "Pacific/Auckland" },
-      { city: "Johannesburg", zone: "Africa/Johannesburg" },
-      { city: "Cairo", zone: "Africa/Cairo" },
-      { city: "Toronto", zone: "America/Toronto" },
-      { city: "Mexico City", zone: "America/Mexico_City" },
-      { city: "Sao Paulo", zone: "America/Sao_Paulo" },
-      { city: "Buenos Aires", zone: "America/Argentina/Buenos_Aires" },
-      { city: "Istanbul", zone: "Europe/Istanbul" },
-      { city: "Hong Kong", zone: "Asia/Hong_Kong" }
+    /* ── Theme Toggle (matches dark-mode-toggle guidance + mt-theme sync) ── */
+    (function initTheme() {
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      const toggleBtn = document.getElementById('themeToggle');
+      const systemDarkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      function getEffectiveScheme() {
+        const current = meta.content;
+        if (current === 'light' || current === 'dark') return current;
+        return systemDarkQuery.matches ? 'dark' : 'light';
+      }
+
+      function syncFromStorage() {
+        try {
+          const stored = localStorage.getItem('mt-theme');
+          meta.content = (stored === 'light' || stored === 'dark') ? stored : 'light dark';
+        } catch (err) {
+          meta.content = 'light dark';
+        }
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        const currentRendered = getEffectiveScheme();
+        const target = currentRendered === 'dark' ? 'light' : 'dark';
+        const systemCurrent = systemDarkQuery.matches ? 'dark' : 'light';
+        try {
+          if (target === systemCurrent) {
+            localStorage.removeItem('mt-theme');
+            meta.content = 'light dark';
+          } else {
+            localStorage.setItem('mt-theme', target);
+            meta.content = target;
+          }
+        } catch (err) {
+          meta.content = target;
+        }
+      });
+
+      window.addEventListener('storage', (ev) => {
+        if (ev.key === 'mt-theme') syncFromStorage();
+      });
+    })();
+
+    /* ── City Dataset (All 25 Original Cities + Bespoke Landmarks) ── */
+    const CITIES = [
+      { slug: 'new-york',     city: 'New York',     country: 'United States',  region: 'americas',     zone: 'America/New_York',               landmark: 'Liberty & Brooklyn Bridge' },
+      { slug: 'los-angeles',  city: 'Los Angeles',  country: 'United States',  region: 'americas',     zone: 'America/Los_Angeles',            landmark: 'Hollywood Hills & Palms' },
+      { slug: 'chicago',      city: 'Chicago',      country: 'United States',  region: 'americas',     zone: 'America/Chicago',                landmark: 'Willis Tower & "L" Bridge' },
+      { slug: 'london',       city: 'London',       country: 'United Kingdom', region: 'europe',       zone: 'Europe/London',                  landmark: 'Big Ben & London Eye' },
+      { slug: 'paris',        city: 'Paris',        country: 'France',         region: 'europe',       zone: 'Europe/Paris',                   landmark: 'Eiffel Tower & Seine' },
+      { slug: 'berlin',       city: 'Berlin',       country: 'Germany',        region: 'europe',       zone: 'Europe/Berlin',                  landmark: 'Brandenburg Gate & TV Tower' },
+      { slug: 'madrid',       city: 'Madrid',       country: 'Spain',          region: 'europe',       zone: 'Europe/Madrid',                  landmark: 'Puerta de Alcalá & Fountains' },
+      { slug: 'rome',         city: 'Rome',         country: 'Italy',          region: 'europe',       zone: 'Europe/Rome',                    landmark: 'Colosseum & Cypress Pines' },
+      { slug: 'bucharest',    city: 'Bucharest',    country: 'Romania',        region: 'europe',       zone: 'Europe/Bucharest',               landmark: 'Parliament & Unirii Fountains' },
+      { slug: 'moscow',       city: 'Moscow',       country: 'Russia',         region: 'europe',       zone: 'Europe/Moscow',                  landmark: 'Saint Basil\'s & Snowfall' },
+      { slug: 'dubai',        city: 'Dubai',        country: 'UAE',            region: 'mea',          zone: 'Asia/Dubai',                     landmark: 'Burj Khalifa & Fountain' },
+      { slug: 'mumbai',       city: 'Mumbai',       country: 'India',          region: 'asia-pacific', zone: 'Asia/Kolkata',                   landmark: 'Gateway of India & Sea' },
+      { slug: 'singapore',    city: 'Singapore',    country: 'Singapore',      region: 'asia-pacific', zone: 'Asia/Singapore',                 landmark: 'Marina Bay & Supertrees' },
+      { slug: 'tokyo',        city: 'Tokyo',        country: 'Japan',          region: 'asia-pacific', zone: 'Asia/Tokyo',                     landmark: 'Mt. Fuji, Tower & Shinkansen' },
+      { slug: 'seoul',        city: 'Seoul',        country: 'South Korea',    region: 'asia-pacific', zone: 'Asia/Seoul',                     landmark: 'N Seoul Tower & Lanterns' },
+      { slug: 'sydney',       city: 'Sydney',       country: 'Australia',      region: 'asia-pacific', zone: 'Australia/Sydney',               landmark: 'Opera House & Harbour' },
+      { slug: 'auckland',     city: 'Auckland',     country: 'New Zealand',    region: 'asia-pacific', zone: 'Pacific/Auckland',               landmark: 'Sky Tower & Waitematā Sail' },
+      { slug: 'johannesburg', city: 'Johannesburg', country: 'South Africa',   region: 'mea',          zone: 'Africa/Johannesburg',            landmark: 'Nelson Mandela Bridge' },
+      { slug: 'cairo',        city: 'Cairo',        country: 'Egypt',          region: 'mea',          zone: 'Africa/Cairo',                   landmark: 'Giza Pyramids & Nile Sail' },
+      { slug: 'toronto',      city: 'Toronto',      country: 'Canada',         region: 'americas',     zone: 'America/Toronto',                landmark: 'CN Tower & Lake Ontario' },
+      { slug: 'mexico-city',  city: 'Mexico City',  country: 'Mexico',         region: 'americas',     zone: 'America/Mexico_City',            landmark: 'Angel of Independence' },
+      { slug: 'sao-paulo',    city: 'São Paulo',    country: 'Brazil',         region: 'americas',     zone: 'America/Sao_Paulo',              landmark: 'Octávio Frias Cable Bridge' },
+      { slug: 'buenos-aires', city: 'Buenos Aires', country: 'Argentina',      region: 'americas',     zone: 'America/Argentina/Buenos_Aires', landmark: 'Obelisco & Puente de la Mujer' },
+      { slug: 'istanbul',     city: 'Istanbul',     country: 'Turkey',         region: 'europe',       zone: 'Europe/Istanbul',                landmark: 'Bosphorus & Hagia Sophia' },
+      { slug: 'hong-kong',    city: 'Hong Kong',    country: 'China',          region: 'asia-pacific', zone: 'Asia/Hong_Kong',                 landmark: 'Victoria Harbour & Junk Boat' }
     ];
 
-    const container = document.getElementById("clocks");
+    /* ── Bespoke Animated SVG Scene Builder (320×240 safe-framed for 4:3 cards) ── */
+    function buildCitySceneSVG(item) {
+      const id = item.slug;
+      const stars = `
+        <g class="scene-sky-stars" fill="#f8fafc">
+          <circle cx="34" cy="28" r="1.2"/><circle cx="74" cy="19" r="1.5" class="scene-anim anim-sparkle"/>
+          <circle cx="118" cy="36" r="1.1"/><circle cx="162" cy="22" r="1.4"/>
+          <circle cx="206" cy="31" r="1.2" class="scene-anim anim-sparkle" style="animation-delay:.8s"/>
+          <circle cx="242" cy="18" r="1.5"/><circle cx="284" cy="28" r="1.1"/>
+          <circle cx="52" cy="54" r="1"/><circle cx="136" cy="58" r="1"/><circle cx="290" cy="64" r="1.2"/>
+        </g>`;
+      const celestial = `
+        <g class="scene-sun">
+          <circle cx="264" cy="44" r="22" fill="#fde047" opacity=".22" class="scene-anim anim-sparkle"/>
+          <circle cx="264" cy="44" r="12" fill="#fef08a"/>
+        </g>
+        <g class="scene-moon">
+          <circle cx="264" cy="44" r="12.5" fill="#e2e8f0"/>
+          <circle cx="270" cy="40" r="10.5" fill="var(--sky-top)"/>
+        </g>
+        <g class="scene-anim anim-cloud" opacity=".28" fill="#ffffff">
+          <path d="M44 54c5-7 16-7 21 0 5-4 12 0 12 6H34c0-5 5-8 10-6z"/>
+          <path d="M164 38c6-8 18-8 23 0 5-3 12 0 12 6h-46c0-4 5-7 11-6z"/>
+        </g>`;
 
-    function formatTime(date, timeZone) {
-      return new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-        timeZone
-      }).format(date);
+      const scenes = {
+        'new-york': `
+          <!-- Distant Midtown Skyline -->
+          <path d="M18 176V128h18v-16h16v64h14V112h20v64h14V98h22v78h16v-36h22v36h18v-28h24v28h18v-42h24v42h20v-22h22v22z" fill="#0d152b" opacity=".55"/>
+          <!-- Hero Towers (Empire State & One WTC) -->
+          <rect x="148" y="64" width="24" height="112" fill="#162242"/>
+          <rect x="153" y="54" width="14" height="10" fill="#1f2f59"/><polygon points="160,26 157,54 163,54" fill="#38bdf8" opacity=".65"/>
+          <rect x="184" y="74" width="22" height="102" fill="#1b294d"/><polygon points="195,40 192,74 198,74" fill="#94a3b8"/>
+          <rect x="218" y="88" width="28" height="88" fill="#131c36"/>
+          <!-- Lit Manhattan Windows -->
+          <g fill="#fde047" class="scene-glow" opacity=".75">
+            <rect x="153" y="74" width="4" height="4"/><rect x="163" y="74" width="4" height="4"/>
+            <rect x="153" y="86" width="4" height="4"/><rect x="163" y="96" width="4" height="4"/>
+            <rect x="189" y="84" width="4" height="4"/><rect x="197" y="94" width="4" height="4"/>
+            <rect x="224" y="98" width="5" height="4"/><rect x="234" y="108" width="5" height="4"/>
+          </g>
+          <!-- Statue of Liberty (fully framed at x=54..82) -->
+          <rect x="55" y="148" width="22" height="28" fill="#1e293b"/>
+          <path d="M58 148L62 104L70 104L74 148Z" fill="#0f766e"/>
+          <circle cx="66" cy="96" r="4.5" fill="#14b8a6"/>
+          <path d="M62 110L51 86L55 84L65 107Z" fill="#14b8a6"/>
+          <circle cx="51" cy="79" r="4.8" fill="#fbbf24" class="scene-anim anim-sparkle"/>
+          <!-- Brooklyn Bridge & Yellow Cab -->
+          <rect x="0" y="172" width="320" height="68" fill="#0a1933"/>
+          <path d="M0 164H320" stroke="#334155" stroke-width="5"/>
+          <path d="M110 124V174M256 124V174" stroke="#475569" stroke-width="6"/>
+          <path d="M0 152Q55 156 110 124Q183 160 256 124Q290 150 320 150" fill="none" stroke="#94a3b8" stroke-width="1.4" opacity=".65"/>
+          <g class="scene-anim anim-glide-x">
+            <rect x="0" y="155" width="20" height="6" rx="2" fill="#facc15"/>
+            <circle cx="21" cy="158" r="3" fill="#fef08a" opacity=".9"/>
+          </g>`,
+        'los-angeles': `
+          <path d="M0 166Q76 106 164 128Q246 104 320 152V240H0Z" fill="#1b1836"/>
+          <text x="86" y="132" font-family="Space Grotesk,sans-serif" font-size="11.5" font-weight="700" fill="#f8fafc" letter-spacing="1.8" opacity=".9">HOLLYWOOD</text>
+          <polygon points="118,188 78,24 106,24" fill="#fde047" opacity=".32" class="scene-anim anim-beam"/>
+          <polygon points="212,188 206,22 236,22" fill="#38bdf8" opacity=".28" class="scene-anim anim-beam-rev"/>
+          <rect x="0" y="176" width="320" height="64" fill="#0b1024"/>
+          <g class="scene-anim anim-sway">
+            <path d="M52 190Q56 142 62 106" stroke="#080b18" stroke-width="5" fill="none"/>
+            <path d="M62 106Q38 98 30 110M62 106Q44 88 40 94M62 106Q84 94 92 106M62 106Q82 106 86 118" stroke="#080b18" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+          </g>
+          <g class="scene-anim anim-sway" style="animation-delay:-1.4s">
+            <path d="M272 190Q266 144 262 112" stroke="#080b18" stroke-width="4.5" fill="none"/>
+            <path d="M262 112Q240 104 232 115M262 112Q284 100 292 111M262 112Q282 112 286 124" stroke="#080b18" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>`,
+        'chicago': `
+          <rect x="0" y="174" width="320" height="66" fill="#0b223d"/>
+          <rect x="42" y="88" width="26" height="90" fill="#131e3a"/>
+          <rect x="84" y="62" width="30" height="116" fill="#19284d"/>
+          <line x1="93" y1="30" x2="93" y2="62" stroke="#e2e8f0" stroke-width="2.2"/>
+          <line x1="105" y1="30" x2="105" y2="62" stroke="#e2e8f0" stroke-width="2.2"/>
+          <rect x="132" y="86" width="26" height="92" fill="#152140"/>
+          <rect x="174" y="72" width="26" height="106" fill="#1a294d"/>
+          <g fill="#7dd3fc" class="scene-glow" opacity=".65">
+            <rect x="90" y="74" width="18" height="3"/><rect x="90" y="86" width="18" height="3"/><rect x="90" y="98" width="18" height="3"/>
+          </g>
+          <path d="M222 174C222 152 268 152 268 174C260 171 250 166 245 166C240 166 230 171 222 174Z" fill="#cbd5e1"/>
+          <rect x="0" y="150" width="320" height="4" fill="#334155"/>
+          <g class="scene-anim anim-glide-x">
+            <rect x="0" y="142" width="56" height="8" rx="2" fill="#94a3b8"/>
+            <rect x="5" y="144" width="9" height="3" fill="#fde047"/><rect x="18" y="144" width="9" height="3" fill="#fde047"/>
+            <rect x="31" y="144" width="9" height="3" fill="#fde047"/><rect x="44" y="144" width="9" height="3" fill="#fde047"/>
+          </g>
+          <path d="M36 186h56M142 190h66M238 184h48" stroke="#38bdf8" stroke-width="1.5" opacity=".55" class="scene-anim anim-shimmer"/>`,
+        'london': `
+          <rect x="0" y="174" width="320" height="66" fill="#0d203b"/>
+          <!-- Distant Westminster Skyline & Tower Bridge silhouette -->
+          <path d="M0 174V144h28v-14h16v44h56v-20h34v20h108v-28h14v28h64z" fill="#111d38" opacity=".6"/>
+          <!-- Big Ben (Elizabeth Tower) -->
+          <rect x="52" y="72" width="24" height="104" fill="#1e293b" stroke="#475569" stroke-width=".8"/>
+          <polygon points="50,72 64,40 78,72" fill="#334155"/>
+          <circle cx="64" cy="88" r="8" fill="#fef08a"/>
+          <path d="M64 88v-5M64 88h4" stroke="#1e293b" stroke-width="1.4" stroke-linecap="round"/>
+          <!-- Rotating London Eye -->
+          <g transform="translate(206, 108)">
+            <g class="scene-anim anim-ferris">
+              <circle cx="0" cy="0" r="46" fill="none" stroke="#93c5fd" stroke-width="2.4"/>
+              <circle cx="0" cy="0" r="38" fill="none" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 4"/>
+              <path d="M0-46V46M-46 0H46M-32-32L32 32M32-32L-32 32" stroke="#7dd3fc" stroke-width="1"/>
+              <circle cx="0" cy="-46" r="3" fill="#fef08a"/><circle cx="46" cy="0" r="3" fill="#fef08a"/>
+              <circle cx="0" cy="46" r="3" fill="#fef08a"/><circle cx="-46" cy="0" r="3" fill="#fef08a"/>
+              <circle cx="32" cy="-32" r="3" fill="#fef08a"/><circle cx="-32" cy="32" r="3" fill="#fef08a"/>
+              <circle cx="-32" cy="-32" r="3" fill="#fef08a"/><circle cx="32" cy="32" r="3" fill="#fef08a"/>
+            </g>
+            <path d="M-20 66L0 0L20 66" fill="none" stroke="#475569" stroke-width="3.2"/>
+          </g>
+          <!-- Bridge & Double-Decker Red Bus -->
+          <rect x="0" y="169" width="320" height="6" fill="#334155"/>
+          <g class="scene-anim anim-glide-x">
+            <rect x="0" y="152" width="30" height="17" rx="3" fill="#dc2626"/>
+            <rect x="3" y="155" width="24" height="4" fill="#fef08a" opacity=".88"/>
+            <rect x="3" y="162" width="20" height="4" fill="#fef08a" opacity=".88"/>
+          </g>`,
+        'paris': `
+          <rect x="0" y="176" width="320" height="64" fill="#0f203d"/>
+          <path d="M0 176V146h54v-14h42v44h128v-18h46v18h50z" fill="#131f3a" opacity=".6"/>
+          <!-- Eiffel Tower Lattice -->
+          <path d="M116 176Q148 118 156 36L164 36Q172 118 204 176H182Q175 152 160 152Q145 152 138 176Z" fill="#1e293b" stroke="#94a3b8" stroke-width="1"/>
+          <rect x="136" y="136" width="48" height="5" fill="#475569"/>
+          <rect x="148" y="102" width="24" height="4" fill="#475569"/>
+          <line x1="160" y1="22" x2="160" y2="36" stroke="#fde047" stroke-width="2.2"/>
+          <g fill="#fde047" class="scene-anim anim-sparkle">
+            <circle cx="158" cy="66" r="2"/><circle cx="163" cy="84" r="1.8"/>
+            <circle cx="152" cy="116" r="2"/><circle cx="169" cy="122" r="1.9"/>
+            <circle cx="142" cy="150" r="2"/><circle cx="178" cy="154" r="2"/>
+          </g>
+          <path d="M84 186h64M172 190h68" stroke="#fbbf24" stroke-width="1.6" opacity=".55" class="scene-anim anim-shimmer"/>`,
+        'berlin': `
+          <rect x="0" y="176" width="320" height="64" fill="#0f172a"/>
+          <line x1="234" y1="22" x2="234" y2="176" stroke="#94a3b8" stroke-width="4.5"/>
+          <circle cx="234" cy="68" r="14" fill="#cbd5e1"/>
+          <circle cx="234" cy="22" r="3.8" fill="#ef4444" class="scene-anim anim-beacon"/>
+          <rect x="74" y="122" width="104" height="50" fill="#1e293b"/>
+          <rect x="69" y="112" width="114" height="10" fill="#334155"/>
+          <path d="M84 122V172M104 122V172M126 122V172M148 122V172M168 122V172" stroke="#0b1120" stroke-width="6.5"/>
+          <path d="M116 112L126 94L136 112Z" fill="#fbbf24" opacity=".9"/>
+          <rect x="0" y="171" width="320" height="5" fill="#334155"/>
+          <g class="scene-anim anim-glide-rev">
+            <rect x="0" y="161" width="52" height="10" rx="3" fill="#eab308"/>
+            <rect x="5" y="163" width="42" height="4" fill="#0f172a"/>
+          </g>`,
+        'madrid': `
+          <rect x="0" y="176" width="320" height="64" fill="#0f172a"/>
+          <rect x="76" y="112" width="168" height="64" fill="#1e293b" stroke="#475569" stroke-width=".8"/>
+          <polygon points="134,112 160,90 186,112" fill="#334155"/>
+          <path d="M90 176V138A9 9 0 0 1 108 138V176M126 176V130A12 12 0 0 1 150 130V176M170 176V130A12 12 0 0 1 194 130V176M212 176V138A9 9 0 0 1 230 138V176" fill="#070b1a"/>
+          <ellipse cx="160" cy="180" rx="52" ry="6" fill="#0284c7"/>
+          <g class="scene-anim anim-fountain">
+            <path d="M158 179Q150 146 138 160M160 179V140M162 179Q170 146 182 160" fill="none" stroke="#7dd3fc" stroke-width="2.6" stroke-linecap="round"/>
+          </g>`,
+        'rome': `
+          <rect x="0" y="176" width="320" height="64" fill="#141218"/>
+          <path d="M68 176V96C106 88 210 92 252 108V176Z" fill="#292524" stroke="#78716c" stroke-width="1"/>
+          <g fill="#f59e0b" class="scene-glow">
+            <rect x="84" y="112" width="13" height="18" rx="6"/><rect x="108" y="112" width="13" height="18" rx="6"/>
+            <rect x="132" y="112" width="13" height="18" rx="6"/><rect x="156" y="112" width="13" height="18" rx="6"/>
+            <rect x="180" y="114" width="13" height="17" rx="6"/><rect x="204" y="116" width="13" height="16" rx="6"/>
+            <rect x="84" y="142" width="13" height="20" rx="6"/><rect x="108" y="142" width="13" height="20" rx="6"/>
+            <rect x="132" y="142" width="13" height="20" rx="6"/><rect x="156" y="142" width="13" height="20" rx="6"/>
+            <rect x="180" y="142" width="13" height="20" rx="6"/><rect x="204" y="144" width="13" height="18" rx="6"/>
+          </g>
+          <ellipse cx="42" cy="142" rx="11" ry="38" fill="#14532d" class="scene-anim anim-sway"/>
+          <ellipse cx="280" cy="140" rx="12" ry="40" fill="#14532d" class="scene-anim anim-sway" style="animation-delay:-1.2s"/>`,
+        'bucharest': `
+          <rect x="0" y="176" width="320" height="64" fill="#0d1e38"/>
+          <!-- Arcul de Triumf cleanly inside left frame -->
+          <rect x="22" y="122" width="28" height="54" fill="#1b263d" stroke="#475569" stroke-width=".7"/>
+          <rect x="19" y="118" width="34" height="5" fill="#334155"/>
+          <path d="M31 176V148A5 5 0 0 1 41 148V176Z" fill="#070b1a"/>
+          <!-- Palace of the Parliament (Palatul Parlamentului) with Colonnades & Illuminated Windows -->
+          <rect x="64" y="120" width="234" height="56" fill="#1e293b" stroke="#475569" stroke-width=".8"/>
+          <rect x="96" y="96" width="170" height="24" fill="#28354d"/>
+          <rect x="138" y="76" width="86" height="20" fill="#334155"/>
+          <rect x="166" y="64" width="30" height="12" fill="#475569"/>
+          <!-- Classical Pillars & Warm Lit Arch Windows -->
+          <g fill="#fbbf24" class="scene-glow" opacity=".82">
+            <rect x="76" y="134" width="5" height="12" rx="2"/><rect x="90" y="134" width="5" height="12" rx="2"/>
+            <rect x="104" y="134" width="5" height="12" rx="2"/><rect x="118" y="134" width="5" height="12" rx="2"/>
+            <rect x="148" y="132" width="7" height="14" rx="3"/><rect x="164" y="132" width="7" height="14" rx="3"/>
+            <rect x="180" y="132" width="7" height="14" rx="3"/><rect x="196" y="132" width="7" height="14" rx="3"/>
+            <rect x="226" y="134" width="5" height="12" rx="2"/><rect x="240" y="134" width="5" height="12" rx="2"/>
+            <rect x="254" y="134" width="5" height="12" rx="2"/><rect x="268" y="134" width="5" height="12" rx="2"/>
+          </g>
+          <!-- Piața Unirii Musical Fountains -->
+          <ellipse cx="180" cy="179" rx="64" ry="6" fill="#0284c7"/>
+          <g class="scene-anim anim-fountain">
+            <path d="M142 178Q136 146 128 160M160 178V136M180 178V124M200 178V136M218 178Q224 146 232 160" fill="none" stroke="#38bdf8" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M160 178V144" stroke="#facc15" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M200 178V144" stroke="#ef4444" stroke-width="1.8" stroke-linecap="round"/>
+          </g>`,
+        'moscow': `
+          <rect x="0" y="176" width="320" height="64" fill="#0f172a"/>
+          <rect x="92" y="122" width="136" height="54" fill="#1e293b"/>
+          <path d="M108 122V94L118 76L128 94V122Z" fill="#dc2626"/>
+          <path d="M146 122V74L160 44L174 74V122Z" fill="#eab308"/>
+          <path d="M192 122V94L202 76L212 94V122Z" fill="#0284c7"/>
+          <circle cx="118" cy="88" r="12" fill="#ef4444"/>
+          <circle cx="160" cy="68" r="14" fill="#fbbf24"/>
+          <circle cx="202" cy="88" r="12" fill="#38bdf8"/>
+          <circle cx="160" cy="38" r="4" fill="#ef4444" class="scene-anim anim-sparkle"/>
+          <g fill="#f8fafc">
+            <circle cx="44" cy="14" r="2" class="scene-anim anim-snow"/>
+            <circle cx="102" cy="14" r="2.2" class="scene-anim anim-snow" style="animation-delay:-1.4s"/>
+            <circle cx="160" cy="14" r="1.8" class="scene-anim anim-snow" style="animation-delay:-2.9s"/>
+            <circle cx="222" cy="14" r="2.2" class="scene-anim anim-snow" style="animation-delay:-.7s"/>
+            <circle cx="274" cy="14" r="1.9" class="scene-anim anim-snow" style="animation-delay:-3.8s"/>
+          </g>`,
+        'dubai': `
+          <rect x="0" y="176" width="320" height="64" fill="#0b172e"/>
+          <polygon points="160,16 152,86 142,136 132,176 188,176 178,136 168,86" fill="#1e293b" stroke="#64748b" stroke-width="1"/>
+          <line x1="160" y1="12" x2="160" y2="176" stroke="#7dd3fc" stroke-width="1.3" opacity=".75"/>
+          <circle cx="160" cy="14" r="3.6" fill="#38bdf8" class="scene-anim anim-beacon"/>
+          <path d="M238 176Q266 138 238 106V176Z" fill="#334155"/>
+          <g class="scene-anim anim-fountain">
+            <path d="M72 176V140M86 176V128M100 176V140" stroke="#7dd3fc" stroke-width="2.6" stroke-linecap="round"/>
+          </g>`,
+        'mumbai': `
+          <rect x="0" y="172" width="320" height="68" fill="#0d2847"/>
+          <rect x="116" y="102" width="88" height="70" fill="#1e293b"/>
+          <path d="M142 172V132A18 18 0 0 1 178 132V172Z" fill="#070b1a"/>
+          <circle cx="160" cy="96" r="13" fill="#334155"/>
+          <g fill="#fbbf24" class="scene-anim anim-sparkle">
+            <circle cx="32" cy="166" r="2.2"/><circle cx="52" cy="167" r="2.2"/><circle cx="72" cy="168" r="2.2"/>
+            <circle cx="248" cy="168" r="2.2"/><circle cx="268" cy="167" r="2.2"/><circle cx="288" cy="166" r="2.2"/>
+          </g>
+          <g class="scene-anim anim-glide-x">
+            <path d="M0 178H26L20 184H5Z" fill="#cbd5e1"/>
+            <polygon points="11,178 11,158 24,174" fill="#fef08a"/>
+          </g>`,
+        'singapore': `
+          <rect x="0" y="172" width="320" height="68" fill="#0c2647"/>
+          <rect x="98" y="88" width="16" height="84" fill="#1e293b"/>
+          <rect x="126" y="88" width="16" height="84" fill="#1e293b"/>
+          <rect x="154" y="88" width="16" height="84" fill="#1e293b"/>
+          <path d="M84 82Q135 92 194 78L190 88Q135 98 86 88Z" fill="#38bdf8"/>
+          <g class="scene-anim anim-sparkle">
+            <path d="M234 172L234 126M220 126H248" stroke="#e879f9" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M268 172L268 132M256 132H280" stroke="#a855f7" stroke-width="3.2" stroke-linecap="round"/>
+          </g>
+          <path d="M88 184h92M210 188h62" stroke="#38bdf8" stroke-width="1.5" opacity=".6" class="scene-anim anim-shimmer"/>`,
+        'tokyo': `
+          <rect x="0" y="176" width="320" height="64" fill="#0d182f"/>
+          <!-- Mt. Fuji Framed Cleanly on Right -->
+          <polygon points="154,176 226,86 298,176" fill="#1b2644"/>
+          <polygon points="205,112 226,86 247,112 237,117 226,109 215,117" fill="#f8fafc" opacity=".92"/>
+          <!-- Tokyo Tower Full Lattice & Spire on Left -->
+          <path d="M56 176Q74 114 78 46L82 46Q86 114 104 176H88Q85 156 80 156Q75 156 72 176Z" fill="#ea580c"/>
+          <line x1="80" y1="30" x2="80" y2="46" stroke="#f8fafc" stroke-width="2.2"/>
+          <rect x="69" y="114" width="22" height="5" fill="#f8fafc"/>
+          <rect x="74" y="80" width="12" height="4" fill="#f8fafc"/>
+          <!-- Streaking Shinkansen Bullet Train -->
+          <rect x="0" y="170" width="320" height="5" fill="#334155"/>
+          <g class="scene-anim anim-glide-fast">
+            <path d="M0 170H72Q84 170 88 164Q75 162 0 162Z" fill="#f8fafc"/>
+            <rect x="6" y="165" width="58" height="2.4" fill="#0284c7"/>
+          </g>
+          <!-- Drifting Sakura Petals -->
+          <g fill="#f9a8d4">
+            <ellipse cx="48" cy="18" rx="3" ry="2" class="scene-anim anim-petal"/>
+            <ellipse cx="136" cy="14" rx="2.8" ry="1.8" class="scene-anim anim-petal" style="animation-delay:-1.7s"/>
+            <ellipse cx="212" cy="18" rx="3" ry="2" class="scene-anim anim-petal" style="animation-delay:-3.4s"/>
+            <ellipse cx="176" cy="24" rx="2.5" ry="1.6" class="scene-anim anim-petal" style="animation-delay:-4.6s"/>
+          </g>`,
+        'seoul': `
+          <rect x="0" y="176" width="320" height="64" fill="#0e172d"/>
+          <path d="M0 176Q82 114 162 138Q240 148 320 176Z" fill="#131c36"/>
+          <line x1="112" y1="54" x2="112" y2="124" stroke="#94a3b8" stroke-width="5"/>
+          <rect x="101" y="76" width="22" height="10" rx="3" fill="#38bdf8"/>
+          <circle cx="112" cy="52" r="3.4" fill="#f43f5e" class="scene-anim anim-beacon"/>
+          <polygon points="244,40 234,176 254,176" fill="#1e293b" stroke="#60a5fa" stroke-width=".9"/>
+          <g fill="#fb923c">
+            <rect x="52" y="160" width="8" height="10" rx="2" class="scene-anim anim-lantern"/>
+            <rect x="180" y="160" width="9" height="11" rx="2" class="scene-anim anim-lantern" style="animation-delay:-2.2s"/>
+            <rect x="278" y="160" width="7" height="9" rx="2" class="scene-anim anim-lantern" style="animation-delay:-4.1s"/>
+          </g>`,
+        'sydney': `
+          <rect x="0" y="172" width="320" height="68" fill="#0d2b4e"/>
+          <path d="M22 172Q100 84 178 172" fill="none" stroke="#64748b" stroke-width="4.5"/>
+          <line x1="22" y1="158" x2="178" y2="158" stroke="#475569" stroke-width="3.5"/>
+          <path d="M174 172Q190 120 214 172Z" fill="#f8fafc"/>
+          <path d="M204 172Q224 108 248 172Z" fill="#e2e8f0"/>
+          <path d="M236 172Q254 128 272 172Z" fill="#cbd5e1"/>
+          <g class="scene-anim anim-glide-rev">
+            <path d="M0 178H26L21 184H4Z" fill="#38bdf8"/>
+            <polygon points="12,177 12,154 24,175" fill="#ffffff"/>
+          </g>`,
+        'auckland': `
+          <rect x="0" y="172" width="320" height="68" fill="#0c2646"/>
+          <polygon points="184,172 244,132 308,172" fill="#172442"/>
+          <line x1="108" y1="38" x2="108" y2="172" stroke="#cbd5e1" stroke-width="5"/>
+          <rect x="96" y="76" width="24" height="11" rx="3" fill="#38bdf8"/>
+          <circle cx="108" cy="36" r="3.4" fill="#22d3ee" class="scene-anim anim-beacon"/>
+          <g class="scene-anim anim-bob">
+            <polygon points="196,178 196,154 212,175" fill="#f8fafc"/>
+            <path d="M188 178H216L212 183H192Z" fill="#f59e0b"/>
+          </g>`,
+        'johannesburg': `
+          <rect x="0" y="176" width="320" height="64" fill="#0f172a"/>
+          <rect x="218" y="88" width="28" height="88" fill="#1e293b"/>
+          <line x1="178" y1="48" x2="178" y2="176" stroke="#94a3b8" stroke-width="4.5"/>
+          <circle cx="178" cy="76" r="7.5" fill="#38bdf8" class="scene-anim anim-beacon"/>
+          <path d="M72 92V176M136 106V176" stroke="#cbd5e1" stroke-width="4"/>
+          <path d="M72 96L28 172M72 96L116 172M136 110L96 172M136 110L176 172" stroke="#60a5fa" stroke-width="1.2" opacity=".75"/>
+          <rect x="0" y="171" width="320" height="5" fill="#334155"/>
+          <g class="scene-anim anim-glide-x"><rect x="0" y="166" width="18" height="5" rx="2" fill="#facc15"/></g>`,
+        'cairo': `
+          <rect x="0" y="172" width="320" height="68" fill="#0d2a49"/>
+          <path d="M0 172H320L270 158H0Z" fill="#78350f"/>
+          <polygon points="48,172 114,82 180,172" fill="#b45309"/>
+          <polygon points="114,82 180,172 140,172" fill="#78350f"/>
+          <polygon points="156,172 208,104 260,172" fill="#d97706"/>
+          <polygon points="208,104 260,172 226,172" fill="#92400e"/>
+          <g class="scene-anim anim-glide-rev">
+            <path d="M0 182H28L22 187H5Z" fill="#f59e0b"/>
+            <path d="M13 182Q15 158 24 154L22 180Z" fill="#fef3c7"/>
+          </g>`,
+        'toronto': `
+          <rect x="0" y="172" width="320" height="68" fill="#0d2547"/>
+          <rect x="64" y="114" width="22" height="58" fill="#16223e"/>
+          <rect x="96" y="96" width="26" height="76" fill="#1c2a4d"/>
+          <rect x="196" y="106" width="28" height="66" fill="#16223e"/>
+          <polygon points="155,28 148,172 162,172" fill="#cbd5e1"/>
+          <ellipse cx="155" cy="72" rx="15" ry="5.5" fill="#ec4899" class="scene-anim anim-sparkle"/>
+          <ellipse cx="155" cy="72" rx="10" ry="3.5" fill="#38bdf8" class="scene-anim anim-beacon"/>
+          <path d="M114 184h82" stroke="#ec4899" stroke-width="1.6" opacity=".6" class="scene-anim anim-shimmer"/>`,
+        'mexico-city': `
+          <rect x="0" y="176" width="320" height="64" fill="#0f172a"/>
+          <polygon points="172,176 246,96 320,176" fill="#1c2442"/>
+          <polygon points="231,112 246,96 261,112" fill="#f8fafc" opacity=".88"/>
+          <rect x="64" y="88" width="26" height="88" fill="#1e293b"/>
+          <line x1="77" y1="62" x2="77" y2="88" stroke="#94a3b8" stroke-width="2.2"/>
+          <rect x="148" y="90" width="12" height="86" fill="#cbd5e1"/>
+          <path d="M142 78L154 86L166 78L154 70Z" fill="#fbbf24" class="scene-anim anim-sparkle"/>
+          <circle cx="154" cy="78" r="5" fill="#facc15"/>`,
+        'sao-paulo': `
+          <rect x="0" y="176" width="320" height="64" fill="#0d172c"/>
+          <rect x="64" y="88" width="24" height="88" fill="#16223f"/>
+          <rect x="230" y="96" width="26" height="80" fill="#16223f"/>
+          <path d="M126 176L182 48M194 176L138 48" stroke="#e2e8f0" stroke-width="5.5" stroke-linecap="round"/>
+          <path d="M160 72L46 160M160 72L274 160M160 92L78 160M160 92L242 160" stroke="#38bdf8" stroke-width="1.2" opacity=".7"/>
+          <rect x="0" y="160" width="320" height="5" fill="#334155"/>
+          <g class="scene-anim anim-glide-x"><rect x="0" y="156" width="20" height="3.5" rx="1.5" fill="#fbbf24"/></g>
+          <g class="scene-anim anim-glide-rev"><rect x="0" y="164" width="18" height="3" rx="1.5" fill="#ef4444"/></g>`,
+        'buenos-aires': `
+          <rect x="0" y="174" width="320" height="66" fill="#0d2647"/>
+          <polygon points="88,46 81,174 95,174" fill="#e2e8f0"/>
+          <polygon points="88,36 81,46 95,46" fill="#cbd5e1"/>
+          <rect x="128" y="170" width="166" height="4" fill="#f8fafc"/>
+          <line x1="224" y1="172" x2="262" y2="84" stroke="#f8fafc" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M260 88L156 170M252 104L178 170M244 122L200 170" stroke="#7dd3fc" stroke-width="1.2"/>
+          <path d="M160 184h96" stroke="#7dd3fc" stroke-width="1.5" opacity=".6" class="scene-anim anim-shimmer"/>`,
+        'istanbul': `
+          <rect x="0" y="172" width="320" height="68" fill="#0d2647"/>
+          <path d="M36 172V132Q64 98 92 132V172Z" fill="#1e293b"/>
+          <rect x="26" y="96" width="5" height="76" fill="#334155"/><polygon points="26,96 28.5,82 31,96" fill="#fbbf24"/>
+          <rect x="97" y="96" width="5" height="76" fill="#334155"/><polygon points="97,96 99.5,82 102,96" fill="#fbbf24"/>
+          <path d="M166 102V172M270 102V172" stroke="#64748b" stroke-width="4"/>
+          <path d="M126 154Q166 150 218 154Q270 150 320 154" stroke="#94a3b8" stroke-width="2.5" fill="none"/>
+          <path d="M126 152Q146 142 166 102Q218 154 270 102Q295 140 320 152" stroke="#f43f5e" stroke-width="1.5" fill="none" class="scene-glow"/>
+          <g class="scene-anim anim-glide-x">
+            <rect x="0" y="174" width="34" height="7" rx="2" fill="#f8fafc"/>
+            <rect x="6" y="170" width="18" height="4" fill="#ef4444"/>
+          </g>`,
+        'hong-kong': `
+          <rect x="0" y="172" width="320" height="68" fill="#0b2342"/>
+          <rect x="136" y="58" width="30" height="114" fill="#15223d" stroke="#38bdf8" stroke-width="1.2"/>
+          <path d="M136 58L166 114M166 58L136 114M136 114L166 172M166 114L136 172" stroke="#38bdf8" stroke-width="1.3"/>
+          <rect x="86" y="88" width="28" height="84" fill="#1a294d"/>
+          <rect x="184" y="76" width="30" height="96" fill="#162445"/>
+          <polygon points="100,88 76,20 96,20" fill="#a855f7" opacity=".32" class="scene-anim anim-beam"/>
+          <polygon points="198,76 220,20 240,20" fill="#22d3ee" opacity=".32" class="scene-anim anim-beam-rev"/>
+          <g class="scene-anim anim-glide-rev">
+            <path d="M0 178H28L22 184H5Z" fill="#78350f"/>
+            <path d="M6 177L8 150L20 154L18 177Z" fill="#dc2626"/>
+            <line x1="7" y1="158" x2="19" y2="160" stroke="#450a0a" stroke-width="1"/>
+            <line x1="7" y1="167" x2="18" y2="169" stroke="#450a0a" stroke-width="1"/>
+          </g>`
+      };
+
+      return `
+        <svg class="scene-canvas" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="${id}-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--sky-top)"/>
+              <stop offset="56%" stop-color="var(--sky-mid)"/>
+              <stop offset="100%" stop-color="var(--sky-horizon)"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="240" fill="url(#${id}-sky)"/>
+          ${stars}
+          ${celestial}
+          ${scenes[id] || ''}
+        </svg>`;
     }
 
-    function formatDate(date, timeZone) {
-      return new Intl.DateTimeFormat("en-GB", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        timeZone
-      }).format(date);
+    /* ── Application State & Single-Pass DOM Initialization ── */
+    const gridEl = document.getElementById('clocksGrid');
+    const solarRibbonEl = document.getElementById('solarRibbon');
+    const localClockEl = document.getElementById('localClock');
+    const localZoneLabelEl = document.getElementById('localZoneLabel');
+    const utcClockEl = document.getElementById('utcClock');
+    const daylightCountEl = document.getElementById('daylightCount');
+    const visibleCountEl = document.getElementById('visibleCount');
+    const searchInputEl = document.getElementById('citySearch');
+    const sortSelectEl = document.getElementById('sortSelect');
+    const formatToggleEl = document.getElementById('formatToggle');
+    const regionTabsEl = document.getElementById('regionTabs');
+    const animToggleEl = document.getElementById('animToggle');
+    const animLabelEl = document.getElementById('animLabel');
+    const animIconPauseEl = document.getElementById('animIconPause');
+    const animIconPlayEl = document.getElementById('animIconPlay');
+
+    let use12Hour = false;
+    let activeRegion = 'all';
+    let searchQuery = '';
+    let sortMode = 'featured';
+    let animationsPaused = false;
+
+    const emptyNoticeEl = document.createElement('div');
+    emptyNoticeEl.className = 'empty-state';
+    emptyNoticeEl.hidden = true;
+    emptyNoticeEl.textContent = 'No cities match your filter — try clearing the search or choosing "All".';
+
+    const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
+    localZoneLabelEl.textContent = `Your local time (${localTz.split('/').pop().replace(/_/g, ' ')})`;
+
+    const timeFormatterCache = new Map();
+    const dateFormatterCache = new Map();
+    const partsFormatterCache = new Map();
+
+    function getTimeFormatter(zone, is12) {
+      const key = `${zone}|${is12 ? '12' : '24'}`;
+      if (!timeFormatterCache.has(key)) {
+        timeFormatterCache.set(key, new Intl.DateTimeFormat('en-US', {
+          timeZone: zone,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: is12
+        }));
+      }
+      return timeFormatterCache.get(key);
     }
 
-    function render() {
-      container.innerHTML = "";
+    function getDateFormatter(zone) {
+      if (!dateFormatterCache.has(zone)) {
+        dateFormatterCache.set(zone, new Intl.DateTimeFormat('en-GB', {
+          timeZone: zone,
+          weekday: 'short',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        }));
+      }
+      return dateFormatterCache.get(zone);
+    }
+
+    function getNumericParts(date, zone) {
+      if (!partsFormatterCache.has(zone)) {
+        partsFormatterCache.set(zone, new Intl.DateTimeFormat('en-CA', {
+          timeZone: zone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hourCycle: 'h23'
+        }));
+      }
+      const parts = partsFormatterCache.get(zone).formatToParts(date);
+      const map = {};
+      for (const p of parts) {
+        if (p.type !== 'literal') map[p.type] = Number(p.value);
+      }
+      return map;
+    }
+
+    function getOffsetMinutes(date, zone) {
+      const p = getNumericParts(date, zone);
+      const asUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+      return Math.round((asUtc - date.getTime()) / 60000);
+    }
+
+    function formatUtcOffset(mins) {
+      const sign = mins >= 0 ? '+' : '-';
+      const abs = Math.abs(mins);
+      const h = Math.floor(abs / 60);
+      const m = abs % 60;
+      return m === 0 ? `UTC${sign}${h}` : `UTC${sign}${h}:${String(m).padStart(2, '0')}`;
+    }
+
+    function formatDelta(diffMins) {
+      if (diffMins === 0) return 'Same time';
+      const sign = diffMins > 0 ? '+' : '-';
+      const abs = Math.abs(diffMins);
+      const h = Math.floor(abs / 60);
+      const m = abs % 60;
+      return m === 0 ? `${sign}${h}h` : `${sign}${h}h ${m}m`;
+    }
+
+    function getSolarPhase(hour) {
+      if (hour >= 5 && hour < 8) return { key: 'dawn', label: 'Dawn', isDay: true };
+      if (hour >= 8 && hour < 17) return { key: 'day', label: 'Day', isDay: true };
+      if (hour >= 17 && hour < 20) return { key: 'dusk', label: 'Dusk', isDay: true };
+      return { key: 'night', label: 'Night', isDay: false };
+    }
+
+    function normalizeText(str) {
+      return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    /* Build all 25 DOM cards + solar ribbon markers ONCE */
+    const cityRefs = CITIES.map((item, index) => {
+      const tile = document.createElement('article');
+      tile.className = 'clock-tile';
+      tile.dataset.slug = item.slug;
+      tile.dataset.region = item.region;
+      tile.dataset.phase = 'day';
+      tile.dataset.order = String(index);
+      tile.dataset.search = normalizeText(`${item.city} ${item.country} ${item.landmark} ${item.zone}`);
+
+      tile.innerHTML = `
+        <div class="clock-flipper">
+          <section class="clock-face clock-face--front" aria-label="${item.city} digital and analog clock">
+            <div class="card-head">
+              <div class="city-meta">
+                <h2 class="city-name">${item.city}</h2>
+                <div class="country-name">${item.country}</div>
+              </div>
+              <div class="analog-dial" aria-hidden="true">
+                <svg viewBox="0 0 64 64">
+                  <g class="dial-ticks">
+                    <line x1="32" y1="5" x2="32" y2="9"/>
+                    <line x1="59" y1="32" x2="55" y2="32"/>
+                    <line x1="32" y1="59" x2="32" y2="55"/>
+                    <line x1="5" y1="32" x2="9" y2="32"/>
+                  </g>
+                  <line class="hand-hour" x1="32" y1="32" x2="32" y2="17"/>
+                  <line class="hand-min" x1="32" y1="32" x2="32" y2="11"/>
+                  <line class="hand-sec" x1="32" y1="37" x2="32" y2="9"/>
+                  <circle cx="32" cy="32" r="2.2" fill="var(--phase-color)"/>
+                </svg>
+              </div>
+            </div>
+            <div class="time-block">
+              <div class="digital-time">
+                <span class="time-main">--:--:--</span>
+                <span class="ampm" hidden></span>
+              </div>
+              <div class="local-date">---</div>
+            </div>
+            <div class="card-foot">
+              <span class="phase-pill"><span class="phase-dot"></span><span class="phase-text">Day</span></span>
+              <div class="delta-wrap">
+                <span class="offset-text">UTC</span>
+                <button type="button" class="tile-flip-btn" aria-expanded="false" aria-label="Flip ${item.city} clock card to animated city scene">Flip ↻</button>
+              </div>
+            </div>
+          </section>
+          <section class="clock-face clock-face--back" aria-label="${item.city} animated scene: ${item.landmark}">
+            ${buildCitySceneSVG(item)}
+            <div class="back-scrim">
+              <div>
+                <div class="back-city">${item.city}</div>
+                <div class="back-landmark">${item.landmark}</div>
+              </div>
+              <div class="back-time-box">
+                <div class="back-time">--:--</div>
+                <div class="back-offset">UTC</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+
+      const flipBtn = tile.querySelector('.tile-flip-btn');
+      flipBtn.addEventListener('click', () => {
+        const flipped = tile.classList.toggle('is-flipped');
+        flipBtn.setAttribute('aria-expanded', flipped ? 'true' : 'false');
+      });
+
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'solar-dot';
+      dot.setAttribute('aria-label', `Locate ${item.city}`);
+      dot.addEventListener('click', () => {
+        if (tile.hidden) {
+          activeRegion = 'all';
+          searchQuery = '';
+          searchInputEl.value = '';
+          updateTabsUI();
+          applyFilterAndSort();
+        }
+        tile.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        tile.classList.add('pulse-highlight');
+        setTimeout(() => tile.classList.remove('pulse-highlight'), 1400);
+      });
+      solarRibbonEl.appendChild(dot);
+
+      gridEl.appendChild(tile);
+
+      return {
+        item,
+        tile,
+        dot,
+        timeMainEl: tile.querySelector('.time-main'),
+        ampmEl: tile.querySelector('.ampm'),
+        dateEl: tile.querySelector('.local-date'),
+        phaseTextEl: tile.querySelector('.phase-text'),
+        offsetTextEl: tile.querySelector('.offset-text'),
+        backTimeEl: tile.querySelector('.back-time'),
+        backOffsetEl: tile.querySelector('.back-offset'),
+        hourHandEl: tile.querySelector('.hand-hour'),
+        minHandEl: tile.querySelector('.hand-min'),
+        secHandEl: tile.querySelector('.hand-sec'),
+        offsetMins: 0
+      };
+    });
+    gridEl.appendChild(emptyNoticeEl);
+
+    function updateTicks() {
       const now = new Date();
+      const localOffset = getOffsetMinutes(now, localTz);
 
-      cities.forEach(({ city, zone }) => {
-        const card = document.createElement("div");
-        card.className = "card";
+      const localParts = getTimeFormatter(localTz, use12Hour).formatToParts(now);
+      const localH = localParts.find((p) => p.type === 'hour')?.value || '--';
+      const localM = localParts.find((p) => p.type === 'minute')?.value || '--';
+      const localS = localParts.find((p) => p.type === 'second')?.value || '--';
+      const localPeriod = localParts.find((p) => p.type === 'dayPeriod')?.value || '';
+      localClockEl.textContent = use12Hour ? `${localH}:${localM}:${localS} ${localPeriod}` : `${localH}:${localM}:${localS}`;
 
-        const cityEl = document.createElement("div");
-        cityEl.className = "city";
-        cityEl.textContent = city;
+      utcClockEl.textContent = `UTC ${getTimeFormatter('UTC', false).format(now)}`;
 
-        const timeEl = document.createElement("div");
-        timeEl.className = "time";
-        timeEl.textContent = formatTime(now, zone);
+      let dayCount = 0;
+      let nightCount = 0;
 
-        const dateEl = document.createElement("div");
-        dateEl.className = "date";
-        dateEl.textContent = formatDate(now, zone);
+      for (const ref of cityRefs) {
+        const z = ref.item.zone;
+        const np = getNumericParts(now, z);
+        const offsetMins = getOffsetMinutes(now, z);
+        ref.offsetMins = offsetMins;
 
-        card.appendChild(cityEl);
-        card.appendChild(timeEl);
-        card.appendChild(dateEl);
-        container.appendChild(card);
+        const solar = getSolarPhase(np.hour);
+        if (solar.isDay) dayCount++;
+        else nightCount++;
+
+        ref.tile.dataset.phase = solar.key;
+        ref.phaseTextEl.textContent = solar.label;
+
+        const parts = getTimeFormatter(z, use12Hour).formatToParts(now);
+        const hh = parts.find((p) => p.type === 'hour')?.value || '00';
+        const mm = parts.find((p) => p.type === 'minute')?.value || '00';
+        const ss = parts.find((p) => p.type === 'second')?.value || '00';
+        const dp = parts.find((p) => p.type === 'dayPeriod')?.value || '';
+
+        ref.timeMainEl.textContent = `${hh}:${mm}:${ss}`;
+        if (use12Hour && dp) {
+          ref.ampmEl.hidden = false;
+          ref.ampmEl.textContent = dp;
+        } else {
+          ref.ampmEl.hidden = true;
+        }
+
+        const dateStr = getDateFormatter(z).format(now);
+        ref.dateEl.textContent = dateStr;
+
+        const utcStr = formatUtcOffset(offsetMins);
+        const deltaStr = formatDelta(offsetMins - localOffset);
+        ref.offsetTextEl.textContent = `${utcStr} · ${deltaStr}`;
+        ref.backTimeEl.textContent = use12Hour && dp ? `${hh}:${mm} ${dp}` : `${hh}:${mm}:${ss}`;
+        ref.backOffsetEl.textContent = `${utcStr} · ${solar.label}`;
+
+        /* Smooth analog clock hands */
+        const secAngle = np.second * 6;
+        const minAngle = np.minute * 6 + np.second * 0.1;
+        const hourAngle = ((np.hour % 12) + np.minute / 60) * 30;
+        ref.secHandEl.setAttribute('transform', `rotate(${secAngle} 32 32)`);
+        ref.minHandEl.setAttribute('transform', `rotate(${minAngle} 32 32)`);
+        ref.hourHandEl.setAttribute('transform', `rotate(${hourAngle} 32 32)`);
+
+        /* Position solar ribbon marker */
+        const pct = ((np.hour + np.minute / 60) / 24) * 100;
+        ref.dot.style.left = `${pct.toFixed(2)}%`;
+        ref.dot.title = `${ref.item.city}: ${hh}:${mm} (${solar.label})`;
+      }
+
+      daylightCountEl.textContent = `${dayCount} in daylight · ${nightCount} in night`;
+    }
+
+    function applyFilterAndSort() {
+      const q = normalizeText(searchQuery.trim());
+      let visibleTotal = 0;
+
+      const sorted = [...cityRefs].sort((a, b) => {
+        if (sortMode === 'east-west') return b.offsetMins - a.offsetMins || a.item.city.localeCompare(b.item.city);
+        if (sortMode === 'west-east') return a.offsetMins - b.offsetMins || a.item.city.localeCompare(b.item.city);
+        if (sortMode === 'az') return a.item.city.localeCompare(b.item.city);
+        return Number(a.tile.dataset.order) - Number(b.tile.dataset.order);
+      });
+
+      for (const ref of sorted) {
+        gridEl.appendChild(ref.tile);
+        const regionMatch = activeRegion === 'all' || ref.item.region === activeRegion;
+        const textMatch = !q || ref.tile.dataset.search.includes(q);
+        const show = regionMatch && textMatch;
+        ref.tile.hidden = !show;
+        ref.dot.hidden = !show;
+        if (show) visibleTotal++;
+      }
+
+      gridEl.appendChild(emptyNoticeEl);
+      emptyNoticeEl.hidden = visibleTotal > 0;
+      visibleCountEl.textContent = visibleTotal === 1 ? '1 city shown' : `${visibleTotal} cities shown`;
+    }
+
+    function updateTabsUI() {
+      regionTabsEl.querySelectorAll('.filter-tab').forEach((btn) => {
+        const isActive = btn.dataset.region === activeRegion;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
       });
     }
 
-    render();
-    setInterval(render, 1000);
+    regionTabsEl.addEventListener('click', (ev) => {
+      const tab = ev.target.closest('.filter-tab');
+      if (!tab) return;
+      activeRegion = tab.dataset.region;
+      updateTabsUI();
+      applyFilterAndSort();
+    });
+
+    searchInputEl.addEventListener('input', () => {
+      searchQuery = searchInputEl.value;
+      applyFilterAndSort();
+    });
+
+    sortSelectEl.addEventListener('change', () => {
+      sortMode = sortSelectEl.value;
+      applyFilterAndSort();
+    });
+
+    formatToggleEl.addEventListener('click', () => {
+      use12Hour = !use12Hour;
+      formatToggleEl.textContent = use12Hour ? '12H' : '24H';
+      updateTicks();
+    });
+
+    animToggleEl.addEventListener('click', () => {
+      animationsPaused = !animationsPaused;
+      if (animationsPaused) {
+        document.documentElement.setAttribute('data-animations', 'paused');
+        animLabelEl.textContent = 'Play scenes';
+        animToggleEl.setAttribute('aria-label', 'Play scene animations');
+        animIconPauseEl.style.display = 'none';
+        animIconPlayEl.style.display = 'block';
+      } else {
+        document.documentElement.removeAttribute('data-animations');
+        animLabelEl.textContent = 'Pause scenes';
+        animToggleEl.setAttribute('aria-label', 'Pause scene animations');
+        animIconPauseEl.style.display = 'block';
+        animIconPlayEl.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === '/' && document.activeElement !== searchInputEl && !ev.ctrlKey && !ev.metaKey) {
+        ev.preventDefault();
+        searchInputEl.focus();
+      }
+    });
+
+    updateTicks();
+    applyFilterAndSort();
+    setInterval(updateTicks, 1000);
   </script>
 </body>
 </html>
